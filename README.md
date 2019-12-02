@@ -29,7 +29,6 @@ Fundamentally, Stellar is a system for tracking ownership. It uses an accounting
 - [Chapter 5. Path Payments](5-path-payments.md)
 - [Chapter 6. Conclusion & More Resources](6-conclusion.md)
 - [Chapter 7. External Data Representation (XDR)](7-xdr.md)
-- [Bonus Chapter - Streaming Horizon Data](bonus-streaming.md)
 
 ### Credits
 [Hacking Stellar](https://github.com/0xfe/hacking-stellar) by [0xfe](https://github.com/0xfe)
