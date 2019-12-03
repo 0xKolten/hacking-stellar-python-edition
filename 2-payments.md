@@ -7,8 +7,6 @@
 
 For the official documentation on payments - [go here](https://www.stellar.org/developers/guides/concepts/list-of-operations.html#payment).
 
-Extra reading: [How user-to-user cross-border payments work on Stellar](https://diagrams.stellar.org/).
-
 As a Stellar user, you have the option to execute many types of [operations](https://www.stellar.org/developers/guides/concepts/operations.html) - I'll go over more of these throughout the following chapters. Payments are one type of operation and are simply the sending of a specific amount of an asset to a destination.
 
 **Note**: On Stellar, transactions contain a list of operations and other relevant information such as fees, signatures, etc. In short, transactions are simply commands that alter the state of the ledger. Each operation you add to a transaction costs a **base fee** of 100 stroops (0.00001 lumens), so the total transaction fee is the number of operations multiplied by the base fee. For the official documentation on transactions - [go here](https://www.stellar.org/developers/guides/concepts/transactions.html).
