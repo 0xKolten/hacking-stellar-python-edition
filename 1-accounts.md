@@ -78,9 +78,11 @@ from stellar_sdk import Keypair
 import requests
 
 def generate_keypair():
-    friendbot = 'https://friendbot.stellar.org/?addr='
+    friendbot = 'https://friendbot.stellar.org'
+
     keypair = Keypair.random()
-    requests.get(friendbot + keypair.public_key)
+    requests.get(friendbot, params={'addr': keypair.public_key})
+
     print("Public key:", keypair.public_key)
     print("Private key:", keypair.secret)
 
@@ -96,100 +98,30 @@ Before going further, I should quickly introduce the Horizon API because we'll b
 
 ### Getting Account Information
 
-I know I told you that your testnet account has 10,000 lumens, but you don't have to take my word for it. Let's see how we can interact with the Horizon testnet API to get more details about accounts.
+I know I told you that your testnet account has 10,000 lumens, but you don't have to take my word for it. Let's see how we can interact with the [Horizon testnet API](https://horizon-testnet.stellar.org/) to get more details about accounts.
 
-One way is to send a get request to the Horizon account endpoint (https://horizon-testnet.stellar.org/accounts/{account}):
-
-``` python
-import requests
-import json
-
-def show_address_data(public_key):
-    r = requests.get('https://horizon-testnet.stellar.org/accounts/' + public_key)
-    account_data = r.json()
-    print(json.dumps(account_data, indent = 2))
-
-if __name__ == '__main__':
-    show_address_data('GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF')
-```
-
-Running your script should return a response showing all account fields that looks like:
-``` json
-{
-  "_links": {
-    "self": {
-      "href": "https://horizon-testnet.stellar.org/accounts/GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF"
-    },
-  -- SNIP --
-  "id": "GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF",
-  "account_id": "GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF",
-  "sequence": "19696720019456",
-  "subentry_count": 0,
-  "last_modified_ledger": 4586,
-  "thresholds": {
-    "low_threshold": 0,
-    "med_threshold": 0,
-    "high_threshold": 0
-  },
-  "flags": {
-    "auth_required": false,
-    "auth_revocable": false,
-    "auth_immutable": false
-  },
-  "balances": [
-    {
-      "balance": "10000.0000000",
-      "buying_liabilities": "0.0000000",
-      "selling_liabilities": "0.0000000",
-      "asset_type": "native"
-    }
-  ],
-  "signers": [
-    {
-      "weight": 1,
-      "key": "GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF",
-      "type": "ed25519_public_key"
-    }
-  ],
-  "data": {}
-}
-```
-
-Read the following documentation for a detailed description of each account field: https://www.stellar.org/developers/guides/concepts/accounts.html#account-fields
-
-Another way to get information about our account is to use the Address object provided by the Python Stellar SDK.
-
-Adjust your script to look like this:
+Using the SDK we can send a get request to the Horizon account endpoint (https://horizon-testnet.stellar.org/accounts/{account}):
 
 ``` python
-from stellar_base.address import Address
+from stellar_sdk import Server
 
 def show_address_data(public_key):
-    address = Address(address = public_key, secret = None, network='testnet')
-    address.get()
-
-    print("Public key:", address.id)
-    print("Last modified ledger:", address.last_modified_ledger)
-    print("Lumen Balance:", address.balances[-1]['balance'])
+    server = Server(horizon_url='https://horizon-testnet.stellar.org')
+    address = server.accounts().account_id(public_key).call()
+    print('Lumen Balance:', address['balances'][-1]['balance'], 'XLM')
 
 if __name__ == '__main__':
-    show_address_data('GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF')
+    show_address_data('GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR')
 ```
 
-With the above code, we use the Address object provided by the Python Stellar SDK to get our public key ```address.id```, the last modified ledger modified by our account ```address.last_modified_ledger```, and our lumen balance ```address.balances[-1]['balance']```.
+This script creates a server object that connects us to the public facing Horizon testnet API and allows us to interface with it. Using the server object we can create a new ```AccountsCallBuilder``` object via ```server.accounts()``` and use that object to get data about a specific account via ```server.accounts().account_id(public_key)```. From there, using ```.call()``` sends a get request to Horizon and returns a JSON response that you can see by visiting https://horizon-testnet.stellar.org/accounts/GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR - feel free to replace my public key with your own. The script then stores that response in a variable ```address```. 
 
-**Note:** Stellar addresses can contain many different balances for many different assets. The balances attribute will return an array of all assets the account holds and their respective balances. Lumens are always located last in the array and can be accessed consistently using ```address.balances[-1]```.
+To print the results in a pretty format we can parse the JSON using ```address['balances'][-1]['balance']```. The way this works is that it isolates the list of balances attached to the account, grabs the last balance on the list (which is always lumens), and then grabs the number balance associated with that item in the list. 
 
-Running the script should print the following information to console:
+**Note:** It is important to remember that Stellar accounts can have many balances associate with them. When presenting balances to a user or checking your own balances, you should go through this entire list. If you are only interested in lumens, these are conveniently always placed at the end of the list of balances as mentioned before. 
 
-```
-Public key: GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF
-Last modified ledger: 4586
-Lumen Balance: 10000.0000000
-```
+To learn more about accounts, read the following documentation for a detailed description of each account field: https://www.stellar.org/developers/guides/concepts/accounts.html#account-fields
 
-The Address object exists as a helper class for Horizon operations on an account. It can be valuable when working with Stellar addresses in your Python scripts or programs. The full documentation can be found [here](https://stellar-base.readthedocs.io/en/latest/api.html#address).
-
-Now that we have 10,000 lumens in our Testnet account, we should learn how to send our first payment.
+Now that we have 10,000 lumens in our testnet account, we should learn how to send our first payment.
 
 → [Chapter 2 - Payments](2-payments.md)
