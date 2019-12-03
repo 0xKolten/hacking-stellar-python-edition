@@ -1,9 +1,18 @@
-[Home](README.md) - [Chapter 1](1-accounts.md) - [Chapter 2](2-payments.md) - [Chapter 3](3-assets.md) - [Chapter 4](4-decentralized-exchange.md) - [Chapter 5](5-path-payments.md) - [Conclusion](6-conclusion.md) - [Bonus Chapter 1](bonus-xdr.md) - [Bonus Chapter 2](bonus-streaming.md)
+[Home](README.md) - [Chapter 0](0-setup.md) - [Chapter 1](1-accounts.md) - [Chapter 2](2-payments.md) - [Chapter 3](3-assets.md) - [Chapter 4](4-decentralized-exchange.md) - [Chapter 5](5-path-payments.md) - [Conclusion](6-conclusion.md)
 
-## Bonus Chapter - Streaming Horizon Data
+## Chapter 0 - Setup
 
-One thing you may find useful when developing Stellar applications is the ability to stream data from Horizon. Examples of this can include streaming ledger data to your application or listening for transactions sent to an account.
+Before we start writing any code and interfacing with the Stellar network, it's important that you have things set up and ready to go.
 
-I have already written a tutorial on how to stream data from the Stellar ledger that you can read [here](https://medium.com/@kolten/stream-ledger-data-from-the-stellar-network-using-python-861af04c40ab).
+Since the following chapters only use Python you should make sure you have Python installed (duh). This step is relatively straight forward and you may already have it completed. On the off chance you haven't downloaded Python, you can do so [here](https://www.python.org/).
 
-In this example I will be showing you how to listen for incoming transactions on an account.
+Next, you should install the [Python Stellar SDK](https://github.com/StellarCN/py-stellar-base). The Python Stellar SDK is a Python library for interfacing with a [Horizon API](https://horizon.stellar.org/), if you don't know what this is yet no worries, we'll get there.
+
+To install the SDK, you can open up your command line and use:
+
+``` json
+pip install stellar-sdk==2.0.0
+
+```
+
+This will download everything you need to get started. 
