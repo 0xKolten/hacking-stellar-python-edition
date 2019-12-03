@@ -2,17 +2,23 @@
 
 ## Chapter 0 - Setup
 
+### Downloads
+
 Before we start writing any code and interfacing with the Stellar network, it's important that you have things set up and ready to go.
 
 Since the following chapters only use Python you should make sure you have Python installed (duh). This step is relatively straight forward and you may already have it completed. On the off chance you haven't downloaded Python, you can do so [here](https://www.python.org/).
 
-Next, you should install the [Python Stellar SDK](https://github.com/StellarCN/py-stellar-base). The Python Stellar SDK is a Python library for interfacing with a [Horizon API](https://horizon.stellar.org/), if you don't know what this is yet no worries, we'll get there.
+Next, you should install the [Python Stellar SDK](https://github.com/StellarCN/py-stellar-base). The Python Stellar SDK is a Python library for interfacing with a [Horizon API](https://horizon.stellar.org/)—if you don't know what this is yet no worries, we'll get there.
 
-To install the SDK, you can open up your command line and use:
+To install the SDK, you can open up your command line and type the command:
 
 ``` json
 pip install stellar-sdk==2.0.0
 
 ```
 
-This will download everything you need to get started. 
+This will download everything you need to get started.
+
+### Housekeeping
+
+I mentioned some of this stuff in the prerequisites 
