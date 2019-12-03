@@ -28,4 +28,10 @@ If you are new to Stellar, the best way to get a brief introduction is the [30 m
 
 Another resource you may find valuable is [Awesome Stellar](https://awesomestellar.com/)—a curated list of Stellar applications, blog posts, educational resources, tools, and more.
 
-Additionally, if it's been a while since you last worked with APIs and JSON responses, now would be a good time to go watch a quick refresher on YouTube. Here's one on [Rest APIs](https://youtu.be/7YcW25PHnAA) and here's one that covers [JSON](https://youtu.be/iiADhChRriM). 
+Additionally, if it's been a while since you last worked with APIs and JSON responses, now would be a good time to go watch a quick refresher on YouTube. Here's one on [Rest APIs](https://youtu.be/7YcW25PHnAA) and here's one that covers [JSON](https://youtu.be/iiADhChRriM).
+
+Doing all this in preparation for Hacking Stellar should put you in a good place to get started. There are many additional resources shared throughout the chapters that are worth checking out and digging in to.
+
+Without further ado... Let's get started.
+
+→ [Chapter 1 - Accounts](1-accounts.md)
