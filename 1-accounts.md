@@ -98,7 +98,7 @@ Before going further, I should quickly introduce the Horizon API because we'll b
 
 ### Getting Account Information
 
-I know I told you that your testnet account has 10,000 lumens, but you don't have to take my word for it. Let's see how we can interact with the [Horizon testnet API](https://horizon-testnet.stellar.org/) to get more details about accounts.
+I know I told you that your testnet account has 10,000 lumens, but you don't have to take my word for it. Let's see how we can interact with the [Horizon testnet API](https://horizon-testnet.stellar.org/) to get more details about accounts and check out our account balance.
 
 Using the SDK we can send a get request to the Horizon account endpoint (https://horizon-testnet.stellar.org/accounts/{account}):
 
@@ -118,10 +118,16 @@ This script creates a server object that connects us to the public facing Horizo
 
 To print the results in a pretty format we can parse the JSON using ```address['balances'][-1]['balance']```. The way this works is that it isolates the list of balances attached to the account, grabs the last balance on the list (which is always lumens), and then grabs the number balance associated with that item in the list. 
 
-**Note:** It is important to remember that Stellar accounts can have many balances associate with them. When presenting balances to a user or checking your own balances, you should go through this entire list. If you are only interested in lumens, these are conveniently always placed at the end of the list of balances as mentioned before. 
+Running this script should print the following: 
+
+``` json 
+Lumen Balance: 10000.0000000 XLM
+``` 
+
+**Note:** It is important to remember that Stellar accounts can have many balances associate with them. When presenting balances to a user or checking your own balances, you should generally go through this entire list. If you are only interested in lumens, these are conveniently always placed at the end of the list of balances as mentioned before. 
 
 To learn more about accounts, read the following documentation for a detailed description of each account field: https://www.stellar.org/developers/guides/concepts/accounts.html#account-fields
 
-Now that we have 10,000 lumens in our testnet account, we should learn how to send our first payment.
+Now that we confirmed that we have 10,000 lumens in our testnet account, we should learn how to send our first payment.
 
 → [Chapter 2 - Payments](2-payments.md)
