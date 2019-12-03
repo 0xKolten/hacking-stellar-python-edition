@@ -9,15 +9,19 @@ For the full documentation on Accounts - [go here.](https://www.stellar.org/deve
 
 To interact with the Stellar network you'll need an account. Your account allows you to send and receive transactions, make offers on the decentralized exchange, and more. Account access is controlled by a public/private key pair.
 
-Accounts are *identified* by a public key. Your public key is what you'll send your friends when you want them to send you money.
+Accounts are *identified* by a public key. Your public key is what you'll send your friends when you want them to send you money, almost like a username.
 
-Accounts are *accessed* by a private key. In order for you to use your account to send a transaction (e.g. make a payment), you'll need to sign transactions with your private key. It's important that you keep your private key(s) secret to avoid getting your account(s) compromised. Setting up [multi-sig](https://www.lumenauts.com/guides/how-to-set-up-a-multi-sig-wallet) will also increase your security.
+Accounts are *accessed* by a private key. In order for you to use your account to send a transaction (e.g. make a payment), you'll need to sign transactions with your private key. Following the username analogy, a private key is similar to a password except it is uniquely tied to your public key. I'd love to dive deeper and explain this myself, but public / private key cryptography is better explained via [a short video](https://youtu.be/GSIDS_lvRv4).
+
+It's important that you keep your private key(s) secret to avoid getting your account(s) compromised. Setting up [multi-sig](https://www.lumenauts.com/guides/how-to-set-up-a-multi-sig-wallet) will also increase your security.
 
 Extra reading: [Security Guide – How To Protect Yourself From Scammers](https://www.stellar.org/blog/stellar-security-guide-protect-scammers/).
 
+Another important distinction to make, is that accounts can exist on the Stellar main net (the one with real money) or they can exist on the Stellar testnet (using fake money). Throughout these chapters the accounts we create will exist on testnet, because that's what it's for.. testing! When creating Stellar applications, it is always best to start on testnet and move to main net later when you're ready for production. A quick guide on testnet ettiquite can be found [here](https://www.stellar.org/developers/guides/concepts/test-net.html). .
+
 ### Create an Account
 
-Before we can do anything fun, we'll need a Stellar testnet account. Let's generate our first keypair:
+Before we can do anything fun, we'll need a Stellar testnet account. Let's generate our first keypair with the following script:
 
 ``` python
 from stellar_base.keypair import Keypair
