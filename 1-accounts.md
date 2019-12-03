@@ -17,40 +17,40 @@ It's important that you keep your private key(s) secret to avoid getting your ac
 
 Extra reading: [Security Guide – How To Protect Yourself From Scammers](https://www.stellar.org/blog/stellar-security-guide-protect-scammers/).
 
-Another important distinction to make, is that accounts can exist on the Stellar main net (the one with real money) or they can exist on the Stellar testnet (using fake money). Throughout these chapters the accounts we create will exist on testnet, because that's what it's for.. testing! When creating Stellar applications, it is always best to start on testnet and move to main net later when you're ready for production. A quick guide on testnet ettiquite can be found [here](https://www.stellar.org/developers/guides/concepts/test-net.html). .
+Another important distinction to make, is that accounts can exist on the Stellar main net (the one with real money) or they can exist on the Stellar testnet (using fake money). Throughout these chapters the accounts we create will exist on testnet, because that's what it's for.. testing! When creating Stellar applications, it is always best to start on testnet and move to main net later when you're ready for production. A quick guide on testnet ettiquite can be found [here](https://www.stellar.org/developers/guides/concepts/test-net.html).
 
 ### Create an Account
 
 Before we can do anything fun, we'll need a Stellar testnet account. Let's generate our first keypair with the following script:
 
 ``` python
-from stellar_base.keypair import Keypair
+from stellar_sdk import Keypair
 
 def generate_keypair():
     keypair = Keypair.random()
-    print("Public key:", keypair.address().decode())
-    print("Private key:", keypair.seed().decode())
+    print("Public key:", keypair.public_key)
+    print("Private key:", keypair.secret)
 
 if __name__ == '__main__':
     generate_keypair()
 ```
 
-The function ```generate_keypair()``` creates a public/private key pair using the Keypair object provided by the Python Stellar SDK. We then print the results to console and you should see something like this:
+The function ```generate_keypair()``` creates a public/private key pair using the Keypair object provided by the Python Stellar SDK. The individual components of the Keypair object can be accessued using ```keypair.public_key``` and ```keypair.secret```. 
+
+We then print the results to console and you should see something like this:
 
 ```
 Public key: GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF
 Private key: SDRRZ2JQBI3RQSHV4Q63YWWJOVFNSXE2R6YSQKGUIPY65UATGUZUX4BB
 ```
 
-Awesome! We have an account, but before we can use it we need to register it with the testnet and fund it with lumens to satisfy the minimum account balance. (Be sure to save the keys you generate)
+Awesome! We have an account, but before we can use it we need to register it with the testnet and fund it with lumens to satisfy the minimum account balance. (Be sure to **save the keys you generate** as we will be reusing them later.)
 
-**Note:** In order to prevent spam, Stellar requires accounts to maintain a minimum account balance that is calculated using the **base reserve** fee of 0.5 lumens. Minimum Account Balance = (2 + # of entries) * base reserve fee. Each additional entry reserves an additional 0.5 XLM. Entries include: trustlines, offers, signers, and data entries.
+**Note:** In order to prevent spam, Stellar requires accounts to maintain a minimum account balance that is calculated using the **base reserve** fee of 0.5 lumens. Minimum Account Balance = (2 + # of entries) * base reserve fee. Each additional entry reserves an additional 0.5 XLM. Entries include: trustlines, offers, signers, and data entries, but more on those later. 
 
 Luckily [Friendbot](https://github.com/stellar/go/tree/master/services/friendbot) has some lumens to spare. So we'll need to ask for some funds by visiting this link: (Replace my public key with the one you generated)
 
-https://friendbot.stellar.org/?addr=GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF
-
-**Note**: You could also add a get request to your ```generate_keypair()``` function to do this programmatically.
+https://friendbot.stellar.org/?addr=GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF 
 
 You should get a response that looks like this after visiting the link:
 
@@ -71,11 +71,31 @@ You should get a response that looks like this after visiting the link:
 
 Now we have a testnet account that's funded with 10,000 lumens from Friendbot.
 
+**Note**: You could also add a get request to your ```generate_keypair()``` function to do this programmatically and save time in the future. A quick and dirty version of the script would look like: 
+
+``` python
+from stellar_sdk import Keypair
+import requests
+
+def generate_keypair():
+    friendbot = 'https://friendbot.stellar.org/?addr='
+    keypair = Keypair.random()
+    requests.get(friendbot + keypair.public_key)
+    print("Public key:", keypair.public_key)
+    print("Private key:", keypair.secret)
+
+if __name__ == '__main__':
+    generate_keypair()
+``` 
+
+Simply import the requests library, include the friendbot URL, and send the get request after generating a keypair. 
+
 ### Getting Account Information
 
 I know I told you that your testnet account has 10,000 lumens, but you don't have to take my word for it. Let's see how we can interact with the Horizon testnet API to get more details about accounts.
 
 One way is to send a get request to the Horizon account endpoint (https://horizon-testnet.stellar.org/accounts/{account}):
+
 ``` python
 import requests
 import json
