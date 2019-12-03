@@ -35,9 +35,9 @@ if __name__ == '__main__':
     generate_keypair()
 ```
 
-The function ```generate_keypair()``` creates a public/private key pair using the Keypair object provided by the Python Stellar SDK. The individual components of the Keypair object can be accessued using ```keypair.public_key``` and ```keypair.secret```. 
+The function ```generate_keypair()``` creates a public/private key pair using the Keypair object provided by the Python Stellar SDK. The individual components of the Keypair object can be accessed using ```keypair.public_key``` and ```keypair.secret```. 
 
-We then print the results to console and you should see something like this:
+We then print the results to console and after running the script you should see something like this:
 
 ```
 Public key: GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR
@@ -89,6 +89,10 @@ if __name__ == '__main__':
 ``` 
 
 Simply import the requests library, include the friendbot URL, and send the get request after generating a keypair. 
+
+### A Brief Horizon Overview 
+
+Before going further, I should quickly introduce the Horizon API because we'll be interfacing with it quiet a bit. In short, Horizon is an API server that allows you to submit transactions to the Stellar network, get account details, stream data from the network, and more. The most commonly used Horizon instances are https://horizon.stellar.org/ and https://horizon-testnet.stellar.org/ (the one we'll be using). These two are run and maintained by the Stellar Development Foundation, but other public facing Horizon APIs exist such as https://stellar-horizon.satoshipay.io/. 
 
 ### Getting Account Information
 
