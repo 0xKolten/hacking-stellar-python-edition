@@ -7,9 +7,9 @@
 
 For the official documentation on payments - [go here](https://www.stellar.org/developers/guides/concepts/list-of-operations.html#payment).
 
-As a Stellar user, you have the option to execute many types of [operations](https://www.stellar.org/developers/guides/concepts/operations.html) - I'll go over more of these throughout the following chapters. Payments are one type of operation and are simply the sending of a specific amount of an asset to a destination.
+As a Stellar user, you have the option to execute many types of [operations](https://www.stellar.org/developers/guides/concepts/operations.html). Payments are one type of operation and are simply the sending of a specific amount of an asset to a destination.
 
-**Note**: On Stellar, transactions contain a list of operations and other relevant information such as fees, signatures, etc. In short, transactions are simply commands that alter the state of the ledger. Each operation you add to a transaction costs a **base fee** of 100 stroops (0.00001 lumens), so the total transaction fee is the number of operations multiplied by the base fee. For the official documentation on transactions - [go here](https://www.stellar.org/developers/guides/concepts/transactions.html).
+**Note**: On Stellar, transactions contain a *list of operations* and other relevant information such as fees, signatures, etc. In short, transactions are simply commands that alter the state of the ledger. Each operation you add to a transaction costs a **base fee** of 100 stroops (0.00001 lumens), so the total transaction fee is the number of operations multiplied by the base fee. For the official documentation on transactions - [go here](https://www.stellar.org/developers/guides/concepts/transactions.html).
 
 ### Sending a Payment
 
@@ -19,13 +19,13 @@ You should now have keys for two accounts, both with 10,000 lumens to send:
 
 ```
 Account A
-Public key: GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF
-Private key: SDRRZ2JQBI3RQSHV4Q63YWWJOVFNSXE2R6YSQKGUIPY65UATGUZUX4BB
+Public key: GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR
+Private key: SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV
 ```
 ```
 Account B
-Public key: GACNGVOSMX7NUBKUEPU26FQ2ROQZRVZ6IGGPESEHNGEKNRS55OUWU2YG
-Private key: SBKNPGV4QOCU6CB4GEUF76LVFJFMBWHY4JVIVYEUB76HYQAG7HXLLD77
+Public key: GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E
+Private key: SCO4JEHDN2ZLIDZMZC62UR6Y5NICMTMRKBPG3JMBKI5AHVXJA46MY2VG
 ```
 
 To send our first payment, we'll write a script that uses the Builder object from the Python Stellar SDK - I'll explain how it all works in the next section:
