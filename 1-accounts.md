@@ -96,6 +96,14 @@ Simply import the requests library, include the friendbot URL, and send the get 
 
 Before going further, I should quickly introduce the Horizon API because we'll be interfacing with it quiet a bit. In short, Horizon is an API server that allows you to submit transactions to the Stellar network, get account details, stream data from the network, and more. The most commonly used Horizon instances are https://horizon.stellar.org/ and https://horizon-testnet.stellar.org/ (the one we'll be using). These two are run and maintained by the Stellar Development Foundation, but other public facing Horizon APIs exist such as https://stellar-horizon.satoshipay.io/. 
 
+Horizon has multiple endpoints that we can get information from such as: 
+- https://horizon-testnet.stellar.org/accounts/{account}
+- https://horizon-testnet.stellar.org/assets{?asset_code,asset_issuer,cursor,limit,order}
+- https://horizon-testnet.stellar.org/ledgers/{sequence}
+- Find the complete overview [here](https://www.stellar.org/developers/horizon/reference/index.html). 
+
+We'll be using a few of these throughout the following chapters. 
+
 ### Getting Account Information
 
 I know I told you that your testnet account has 10,000 lumens, but you don't have to take my word for it. Let's see how we can interact with the [Horizon testnet API](https://horizon-testnet.stellar.org/) to get more details about accounts and check out our account balance.
