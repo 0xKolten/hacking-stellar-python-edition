@@ -11,7 +11,7 @@ To interact with the Stellar network you'll need an account. Your account allows
 
 Accounts are *identified* by a public key. Your public key is what you'll send your friends when you want them to send you money, almost like a username.
 
-Accounts are *accessed* by a private key. In order for you to use your account to send a transaction (e.g. make a payment), you'll need to sign transactions with your private key. Following the username analogy, a private key is similar to a password except it is uniquely tied to your public key. I'd love to dive deeper and explain this myself, but public / private key cryptography is better explained via [a short video](https://youtu.be/GSIDS_lvRv4).
+Accounts are *accessed* by a private key. In order for you to prove ownership of your account and use it to send a transaction (e.g. make a payment), you'll need to sign transactions with your private key. Following the username analogy, a private key is similar to a password except it is uniquely tied to your public key. I'd love to dive deeper and explain this myself, but public / private key cryptography is better explained via [this short video](https://youtu.be/GSIDS_lvRv4).
 
 It's important that you keep your private key(s) secret to avoid getting your account(s) compromised. Setting up [multi-sig](https://www.lumenauts.com/guides/how-to-set-up-a-multi-sig-wallet) will also increase your security.
 
