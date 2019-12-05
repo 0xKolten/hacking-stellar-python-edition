@@ -6,7 +6,7 @@
 
 Before we start writing any code and interfacing with the Stellar network, it's important that you have things set up and ready to go.
 
-Since the following chapters only use Python you should make sure you have Python installed (duh). This step is relatively straight forward and you may already have it completed. On the off chance you haven't downloaded Python, you can do so [here](https://www.python.org/).
+Since the following chapters only use Python you should make sure you have Python installed. This step is relatively straight forward and you may already have it completed. On the off chance you haven't downloaded Python, you can do so [here](https://www.python.org/).
 
 Most importantly, if you have never written, compiled, or run Python scripts before ***please*** read this blog before getting started—[How to Run Your Python Scripts](https://realpython.com/run-python-scripts/). This will save you from a lot of headaches. 
 
