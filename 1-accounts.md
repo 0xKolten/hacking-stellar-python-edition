@@ -108,7 +108,7 @@ We'll be using a few of these throughout the following chapters.
 
 I know I told you that your testnet account has 10,000 lumens, but you don't have to take my word for it. Let's see how we can interact with the [Horizon testnet API](https://horizon-testnet.stellar.org/) to get more details about accounts and check out our account balance.
 
-Using the SDK we can send a get request to the Horizon account endpoint (https://horizon-testnet.stellar.org/accounts/{account}):
+Using the SDK we can send a get request to the Horizon account endpoint (https://horizon-testnet.stellar.org/accounts/{account}) and grab the balance information that we are looking for like so:
 
 ``` python
 from stellar_sdk import Server
@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
 This script creates a server object that connects us to the public facing Horizon testnet API and allows us to interface with it. Using the server object we can create a new ```AccountsCallBuilder``` object via ```server.accounts()``` and use that object to get data about a specific account via ```server.accounts().account_id(public_key)```. From there, using ```.call()``` sends a get request to Horizon and returns a JSON response that you can see by visiting https://horizon-testnet.stellar.org/accounts/GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR - feel free to replace my public key with your own. The script then stores that response in a variable ```address```. 
 
-To print the results in a pretty format we can parse the JSON using ```address['balances'][-1]['balance']```. The way this works is that it isolates the list of balances attached to the account, grabs the last balance on the list (which is always lumens), and then grabs the number balance associated with that item in the list. 
+To print the results in a nice format we can grab balance data directly from the JSON using ```address['balances'][-1]['balance']```. The way this works is that it isolates the list of balances attached to the account, grabs the last balance on the list (which is always lumens), and then grabs the number balance associated with that item in the list. 
 
 Running this script should print the following: 
 
@@ -132,7 +132,7 @@ Running this script should print the following:
 Lumen Balance: 10000.0000000 XLM
 ``` 
 
-**Note:** It is important to remember that Stellar accounts can have many balances associate with them. When presenting balances to a user or checking your own balances, you should generally go through this entire list. If you are only interested in lumens, these are conveniently always placed at the end of the list of balances as mentioned before. 
+**Note:** It is important to remember that Stellar accounts can have many balances associated with them. When presenting balances to a user or checking your own balances, you should generally go through this entire list presenting the name of the asset and associated balance. If you are only interested in lumens, these are always placed at the end of the list of balances making for easy access. 
 
 To learn more about accounts, read the following documentation for a detailed description of each account field: https://www.stellar.org/developers/guides/concepts/accounts.html#account-fields
 
