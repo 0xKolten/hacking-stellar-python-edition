@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
 The function ```generate_keypair()``` creates a public/private key pair using the Keypair object provided by the Python Stellar SDK. The individual components of the Keypair object can be accessed using ```keypair.public_key``` and ```keypair.secret```. 
 
-We then print the results to console and after running the script you should see something like this:
+After running the script you should see the results printed to console like this:
 
 ```
 Public key: GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR
