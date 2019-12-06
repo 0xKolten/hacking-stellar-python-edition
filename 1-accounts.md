@@ -46,6 +46,8 @@ Private key: SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV
 
 Awesome! We have an account, but before we can use it we need to register it with the testnet and fund it with lumens to satisfy the minimum account balance. (Be sure to **save the keys you generate** as we will be reusing them later.)
 
+What are lumens? The lumen, often abbreviated XLM, is the protocol token of the Stellar network. Anyone that wants to hold or move money on Stellar must also hold lumens.
+
 **Note:** In order to prevent spam, Stellar requires accounts to maintain a minimum account balance that is calculated using the **base reserve** fee of 0.5 lumens. Minimum Account Balance = (2 + # of entries) * base reserve fee. Each additional entry reserves an additional 0.5 XLM. Entries include: trustlines, offers, signers, and data entries, but more on those later. 
 
 Luckily [Friendbot](https://github.com/stellar/go/tree/master/services/friendbot) has some lumens to spare. So we'll need to ask for some funds by visiting this link: (Replace my public key with the one you generated)
