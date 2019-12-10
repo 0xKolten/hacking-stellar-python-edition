@@ -115,13 +115,13 @@ Using the SDK we can send a get request to the Horizon account endpoint (https:/
 ``` python
 from stellar_sdk import Server
 
-def show_address_data(public_key):
+def show_balance(public_key):
     server = Server(horizon_url='https://horizon-testnet.stellar.org')
     address = server.accounts().account_id(public_key).call()
     print('Lumen Balance:', address['balances'][-1]['balance'], 'XLM')
 
 if __name__ == '__main__':
-    show_address_data('GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR')
+    show_balance('GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR')
 ```
 
 This script creates a server object that connects us to the public facing Horizon testnet API and allows us to interface with it. Using the server object we can create a new ```AccountsCallBuilder``` object via ```server.accounts()``` and use that object to get data about a specific account via ```server.accounts().account_id(public_key)```. From there, using ```.call()``` sends a get request to Horizon and returns a JSON response that you can see by visiting https://horizon-testnet.stellar.org/accounts/GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR - feel free to replace my public key with your own. The script then stores that response in a variable ```address```. 
