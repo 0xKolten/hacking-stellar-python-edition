@@ -99,22 +99,18 @@ Transaction result: txSUCCESS
 }
 ```
 
-Now we can run ```show_balance_data()``` that we created last chapter and take a look at both accounts:
+Now we can use the ```show_balance()``` script that we created last chapter and take a look at both account balances:
 
 ```
 Account A
-Public key: GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF
-Last modified ledger: 4679
-Lumen Balance: 9899.9999800
+Lumen Balance: 9899.9999900 XLM
 ```
 ```
 Account B
-Public key: GACNGVOSMX7NUBKUEPU26FQ2ROQZRVZ6IGGPESEHNGEKNRS55OUWU2YG
-Last modified ledger: 4679
-Lumen Balance: 10100.0000000
+Lumen Balance: 10100.0000000 XLM
 ```
 
-Perfect, it worked 😎 Let's look under the hood and see what we did.
+Perfect, it worked 😎 Let's break down what we did.
 
 ### Unpacking the Payment
 
