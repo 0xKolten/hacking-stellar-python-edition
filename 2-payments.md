@@ -114,106 +114,50 @@ Perfect, it worked 😎 Let's break down what we did.
 
 ### Unpacking the Payment
 
-To understand what's going on we first need to understand what the ```send_payment()``` function we created does:
+To understand what's going on we first need to understand the ```send_payment()``` function part of the script:
 
 ``` python
-def send_payment(signing_key, receiving_key, amount):
-    builder = Builder(secret=signing_key, horizon_uri='https://horizon-testnet.stellar.org' , network='testnet') \
-        .add_text_memo("Here's some lumens!") \
-        .append_payment_op(destination=receiving_key, asset_code='XLM', amount=amount)
-    # Sign and submit transaction -> print response
-    builder.sign()
-    response = builder.submit()
-    print(json.dumps(response, indent = 2))
+def send_payment(signing_key, receiving_key, amount, asset='XLM'):
+    # Derive Keypair object and public key from the signing key (source account)
+    source_keypair = Keypair.from_secret(signing_key)
+    source_public_key = source_keypair.public_key
+
+    # Account receiving funds
+    receiving_key = receiving_key
+
+    # Talk to testnet horizon instance
+    server = Server(horizon_url="https://horizon-testnet.stellar.org")
+
+    # Fetch the current sequence number for the source account from Horizon.
+    source_account = server.load_account(source_public_key)
+
+    # Build transaction
+    transaction = (
+        TransactionBuilder(
+            source_account=source_account,
+            network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
+            base_fee=100,
+        )
+        .append_payment_op(receiving_key, amount, asset)
+        .build()
+    )
+
+    transaction.sign(source_keypair)
+
+    # Submit the transaction to Horizon and check if successful
+    response = server.submit_transaction(transaction)
+    result_xdr = response.get('result_xdr')
+    tx_success(result_xdr)
+    print(json.dumps(response, indent=2))
 ```
 
-```send_payment()``` takes 3 parameters that serve as the basic building blocks of a payment. The ```signing_key``` is the private key of the account who wishes to send the payment, the ```receiving_key``` is the public key of the account we are sending the payment *to* and ```amount``` is simply the amount of the asset we are trying to send.
+The first thing to highlight are the 4 variables that ```send_payment()``` takes as input: 
+- ```signing_key```
+- ```receiving_key```
+- ```amount```
+- ```asset```
 
-Our script also adds a memo to the transaction and could have a parameter specified, but I left it out for simplicity. Memo's are an optional attribute for transactions and contain extra information. In this case I included a note that says "Here's some lumens!"
-
-Memos can also have several types such as ```MEMO_TEXT``` (what we used), ```MEMO_ID```, ```MEMO_HASH```, ```MEMO_RETURN```. Read more about memos [here](https://www.stellar.org/developers/guides/concepts/transactions.html#memo).
-
-Next, we create a [Builder](https://stellar-base.readthedocs.io/en/latest/api.html#builder) object provided by the Python Stellar SDK -  passing in the signing key, horizon instance, and network we are using. We then finish constructing the transaction by attaching a memo and a payment operation.
-
-**Note**: If desired, a fee parameter can also be specified in the Builder object, by default it obtains the base fee from the latest ledger.
-
-The Builder object then creates a ***Transaction Envelope*** that will be submitted to Horizon. A Transaction Envelope is an object that contains the transaction object itself and a set of signatures (in this case one signature). The transaction object contains the source account, fee, sequence number, the list of operations, list of signatures, memo, and time bounds. You have the option to set these parameters when using the Builder object, otherwise the SDK handles it for you.
-
-After building our transaction, ```builder.sign()``` is used to sign the TransactionEnvelope with the secret key we provided. Then ```builder.submit()``` submits the [XDR object](https://www.stellar.org/developers/horizon/reference/xdr.html) of the transaction envelope to Horizon and returns a JSON response:
-
-``` json
-{
-  "_links": {
-    "transaction": {
-      "href": "https://horizon-testnet.stellar.org/transactions/1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259"
-    }
-  },
-  "hash": "1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259",
-  "ledger": 4679,
-  "envelope_xdr": "AAAAAP+FxFvFo7kypsbnKGqL74f5G2kaDYe3GdG1o4WOv2XxAAAAyAAAEeoAAAABAAAAAAAAAAEAAAATSGVyZSdzIHNvbWUgbHVtZW5zIQAAAAACAAAAAAAAAAEAAAAABNNV0mX+2gVUI+mvFhqLoZjXPkGM8kiHaYimxl3rqWoAAAAAAAAAADuaygAAAAAAAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAC2ZlZC5uZXR3b3JrAAAAAAAAAAAAAAAAAY6/ZfEAAABApvgdnq5Tq80aR9FymeQBJAWXgHhMtcpjX59PC3ARtKNaHg5jlePBATov3KLtI9n3f8vOVPbYZ4yOU0xY8WFpAA==",
-  "result_xdr": "AAAAAAAAAMgAAAAAAAAAAgAAAAAAAAABAAAAAAAAAAAAAAAFAAAAAAAAAAA=",
-  "result_meta_xdr": "AAAAAQAAAAIAAAADAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXSHbnOAAAEeoAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXSHbnOAAAEeoAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAACAAAABAAAAAMAABIoAAAAAAAAAAAE01XSZf7aBVQj6a8WGouhmNc+QYzySIdpiKbGXeupagAAABdIdugAAAASKAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAABJHAAAAAAAAAAAE01XSZf7aBVQj6a8WGouhmNc+QYzySIdpiKbGXeupagAAABeEEbIAAAASKAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAMAABJHAAAAAAAAAAD/hcRbxaO5MqbG5yhqi++H+RtpGg2HtxnRtaOFjr9l8QAAABdIduc4AAAR6gAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAABJHAAAAAAAAAAD/hcRbxaO5MqbG5yhqi++H+RtpGg2HtxnRtaOFjr9l8QAAABcM3B04AAAR6gAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAIAAAADAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXDNwdOAAAEeoAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXDNwdOAAAEeoAAAABAAAAAAAAAAAAAAAAAAAAC2ZlZC5uZXR3b3JrAAEAAAAAAAAAAAAAAAAAAAA="
-}
-```
-
-For this walkthrough, the important part of the response is the transaction link ```"href": "https://horizon-testnet.stellar.org/transactions/1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259"```.
-
-Visiting link gives us a response with some details that are useful when we want certain information about a transaction:
-
-``` json
-{
-  "memo": "Here's some lumens!",
-  "_links": {
-    "self": {
-      "href": "https://horizon-testnet.stellar.org/transactions/1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259"
-    },
-    "account": {
-      "href": "https://horizon-testnet.stellar.org/accounts/GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF"
-    },
-    "ledger": {
-      "href": "https://horizon-testnet.stellar.org/ledgers/4679"
-    },
-    "operations": {
-      "href": "https://horizon-testnet.stellar.org/transactions/1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259/operations{?cursor,limit,order}",
-      "templated": true
-    },
-    "effects": {
-      "href": "https://horizon-testnet.stellar.org/transactions/1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259/effects{?cursor,limit,order}",
-      "templated": true
-    },
-    "precedes": {
-      "href": "https://horizon-testnet.stellar.org/transactions?order=asc\u0026cursor=20096151986176"
-    },
-    "succeeds": {
-      "href": "https://horizon-testnet.stellar.org/transactions?order=desc\u0026cursor=20096151986176"
-    }
-  },
-  "id": "1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259",
-  "paging_token": "20096151986176",
-  "successful": true,
-  "hash": "1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259",
-  "ledger": 4679,
-  "created_at": "2019-07-31T16:19:23Z",
-  "source_account": "GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF",
-  "source_account_sequence": "19696720019457",
-  "fee_paid": 200,
-  "fee_charged": 200,
-  "max_fee": 200,
-  "operation_count": 2,
-  "envelope_xdr": "AAAAAP+FxFvFo7kypsbnKGqL74f5G2kaDYe3GdG1o4WOv2XxAAAAyAAAEeoAAAABAAAAAAAAAAEAAAATSGVyZSdzIHNvbWUgbHVtZW5zIQAAAAACAAAAAAAAAAEAAAAABNNV0mX+2gVUI+mvFhqLoZjXPkGM8kiHaYimxl3rqWoAAAAAAAAAADuaygAAAAAAAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAC2ZlZC5uZXR3b3JrAAAAAAAAAAAAAAAAAY6/ZfEAAABApvgdnq5Tq80aR9FymeQBJAWXgHhMtcpjX59PC3ARtKNaHg5jlePBATov3KLtI9n3f8vOVPbYZ4yOU0xY8WFpAA==",
-  "result_xdr": "AAAAAAAAAMgAAAAAAAAAAgAAAAAAAAABAAAAAAAAAAAAAAAFAAAAAAAAAAA=",
-  "result_meta_xdr": "AAAAAQAAAAIAAAADAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXSHbnOAAAEeoAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXSHbnOAAAEeoAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAACAAAABAAAAAMAABIoAAAAAAAAAAAE01XSZf7aBVQj6a8WGouhmNc+QYzySIdpiKbGXeupagAAABdIdugAAAASKAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAABJHAAAAAAAAAAAE01XSZf7aBVQj6a8WGouhmNc+QYzySIdpiKbGXeupagAAABeEEbIAAAASKAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAMAABJHAAAAAAAAAAD/hcRbxaO5MqbG5yhqi++H+RtpGg2HtxnRtaOFjr9l8QAAABdIduc4AAAR6gAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAABJHAAAAAAAAAAD/hcRbxaO5MqbG5yhqi++H+RtpGg2HtxnRtaOFjr9l8QAAABcM3B04AAAR6gAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAIAAAADAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXDNwdOAAAEeoAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXDNwdOAAAEeoAAAABAAAAAAAAAAAAAAAAAAAAC2ZlZC5uZXR3b3JrAAEAAAAAAAAAAAAAAAAAAAA=",
-  "fee_meta_xdr": "AAAAAgAAAAMAABHqAAAAAAAAAAD/hcRbxaO5MqbG5yhqi++H+RtpGg2HtxnRtaOFjr9l8QAAABdIdugAAAAR6gAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAABJHAAAAAAAAAAD/hcRbxaO5MqbG5yhqi++H+RtpGg2HtxnRtaOFjr9l8QAAABdIduc4AAAR6gAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
-  "memo_type": "text",
-  "signatures": [
-    "pvgdnq5Tq80aR9FymeQBJAWXgHhMtcpjX59PC3ARtKNaHg5jlePBATov3KLtI9n3f8vOVPbYZ4yOU0xY8WFpAA=="
-  ]
-}
-```
-
-From the response, we can confirm that the transaction was successful by checking ```"successful": true```. This is important because failed transactions can also be included in the ledger. We can also get information such as ```fee_paid```, ```operation_count```, and the ```memo``` that was included. As of right now this isn't handled for you by the SDK. You'll have to write something to manually check that a transaction was successful.  
-
-**Note**: The ```operation_count``` in my response is 2, *yours* should be 1. In the original draft of the ```send_payment()``` example I included another operation that I decided to later remove for simplicity. I also have a ```fee_paid``` of 200 stroops due to the extra operation, you should have ```fee_paid: 100```. Remember: transaction fee = base fee * operation count.
+These four inputs are all we need to make a simple lumen payment. The ```signing_key``` allows the sender, or source account, to sign off on the transaction with their private key. The ```receiving_key``` is the receiving user's public key. The ```amount```, is the amount of an asset we are sending, and ```asset``` specifies that we are sending lumens. 
 
 Now that you have some experience creating and sending payments, try sending different amounts back and forth between your accounts and getting familar with the responses from Horizon.
 
