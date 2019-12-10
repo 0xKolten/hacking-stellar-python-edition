@@ -28,42 +28,74 @@ Public key: GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E
 Private key: SCO4JEHDN2ZLIDZMZC62UR6Y5NICMTMRKBPG3JMBKI5AHVXJA46MY2VG
 ```
 
-To send our first payment, we'll write a script that uses the Builder object from the Python Stellar SDK - I'll explain how it all works in the next section:
+To send our first payment from ```Account A``` to ```Account B```, we'll write a script that builds a transaction for our payment operation and checks if that transaction was successful - I'll explain how it all works in the next section:
 
 ``` python
-from stellar_base.builder import Builder
+from stellar_sdk import Server, Keypair, TransactionBuilder, Network
+from stellar_sdk.xdr import Xdr
+from stellar_sdk.xdr.StellarXDR_const import TransactionResultCode
 import json
+import base64
 
-def send_payment(signing_key, receiving_key, amount):
-    builder = Builder(secret=signing_key, horizon_uri='https://horizon-testnet.stellar.org' , network='testnet') \
-        .add_text_memo("Here's some lumens!") \
-        .append_payment_op(destination=receiving_key, asset_code='XLM', amount=amount)
-    # Sign and submit transaction -> print response
-    builder.sign()
-    response = builder.submit()
-    print(json.dumps(response, indent = 2))
+def tx_success(result_xdr):
+    xdr_decoded = base64.b64decode(result_xdr.encode())
+    unpacker = Xdr.StellarXDRUnpacker(xdr_decoded)
+    xdr_obj = unpacker.unpack_TransactionResult()
+    print('Transaction result:', TransactionResultCode.get(xdr_obj.result.code))
+
+def send_payment(signing_key, receiving_key, amount, asset='XLM'):
+    # Derive Keypair object and public key from the signing key (source account)
+    source_keypair = Keypair.from_secret(signing_key)
+    source_public_key = source_keypair.public_key
+
+    # Account receiving funds
+    receiving_key = receiving_key
+
+    # Talk to testnet horizon instance
+    server = Server(horizon_url="https://horizon-testnet.stellar.org")
+
+    # Fetch the current sequence number for the source account from Horizon.
+    source_account = server.load_account(source_public_key)
+
+    # Build transaction
+    transaction = (
+        TransactionBuilder(
+            source_account=source_account,
+            network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
+            base_fee=100,
+        )
+        .append_payment_op(receiving_key, amount, asset)
+        .build()
+    )
+
+    transaction.sign(source_keypair)
+
+    # Submit the transaction to Horizon and check if successful
+    response = server.submit_transaction(transaction)
+    result_xdr = response.get('result_xdr')
+    tx_success(result_xdr)
+    print(json.dumps(response, indent=2))
 
 if __name__ == '__main__':
-    # Send 100 lumens from Account A -> Account B
-    # 'SDRRZ2JQBI3RQSHV4Q63YWWJOVFNSXE2R6YSQKGUIPY65UATGUZUX4BB' = Account A's private key
-    # 'GACNGVOSMX7NUBKUEPU26FQ2ROQZRVZ6IGGPESEHNGEKNRS55OUWU2YG' = Account B's public key
-    # 100 = amount to send
-    send_payment('SDRRZ2JQBI3RQSHV4Q63YWWJOVFNSXE2R6YSQKGUIPY65UATGUZUX4BB', 'GACNGVOSMX7NUBKUEPU26FQ2ROQZRVZ6IGGPESEHNGEKNRS55OUWU2YG', '100')
+    # Account A Signing Key: SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV
+    # Account B Public Key: GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E
+    send_payment('SBCQT2KDQNBP3H4ONGLCY2QRD2EXDMVG7REODUIPWRBTENAIGCHTBD6V', 'GCCNQCV26F4DZVOOKQBNZBW7JNXDRNHNCSVGYQOXKX27RWEAXWCMH3IZ', '100')
  ```
 
 Run the script and if everything went according to plan, you should've gotten a response like this:
 ``` json
+Transaction result: txSUCCESS
 {
   "_links": {
     "transaction": {
-      "href": "https://horizon-testnet.stellar.org/transactions/1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259"
+      "href": "https://horizon-testnet.stellar.org/transactions/ab2391d09a662b3d94ee274f54015542906613034142ad16dc35a69377836b5a"
     }
   },
-  "hash": "1ca91dc5589e9ee293e6429396214f3e38ed7d65b541fdddac2e70165be97259",
-  "ledger": 4679,
-  "envelope_xdr": "AAAAAP+FxFvFo7kypsbnKGqL74f5G2kaDYe3GdG1o4WOv2XxAAAAyAAAEeoAAAABAAAAAAAAAAEAAAATSGVyZSdzIHNvbWUgbHVtZW5zIQAAAAACAAAAAAAAAAEAAAAABNNV0mX+2gVUI+mvFhqLoZjXPkGM8kiHaYimxl3rqWoAAAAAAAAAADuaygAAAAAAAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAC2ZlZC5uZXR3b3JrAAAAAAAAAAAAAAAAAY6/ZfEAAABApvgdnq5Tq80aR9FymeQBJAWXgHhMtcpjX59PC3ARtKNaHg5jlePBATov3KLtI9n3f8vOVPbYZ4yOU0xY8WFpAA==",
-  "result_xdr": "AAAAAAAAAMgAAAAAAAAAAgAAAAAAAAABAAAAAAAAAAAAAAAFAAAAAAAAAAA=",
-  "result_meta_xdr": "AAAAAQAAAAIAAAADAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXSHbnOAAAEeoAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXSHbnOAAAEeoAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAACAAAABAAAAAMAABIoAAAAAAAAAAAE01XSZf7aBVQj6a8WGouhmNc+QYzySIdpiKbGXeupagAAABdIdugAAAASKAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAABJHAAAAAAAAAAAE01XSZf7aBVQj6a8WGouhmNc+QYzySIdpiKbGXeupagAAABeEEbIAAAASKAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAMAABJHAAAAAAAAAAD/hcRbxaO5MqbG5yhqi++H+RtpGg2HtxnRtaOFjr9l8QAAABdIduc4AAAR6gAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAABJHAAAAAAAAAAD/hcRbxaO5MqbG5yhqi++H+RtpGg2HtxnRtaOFjr9l8QAAABcM3B04AAAR6gAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAIAAAADAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXDNwdOAAAEeoAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAASRwAAAAAAAAAA/4XEW8WjuTKmxucoaovvh/kbaRoNh7cZ0bWjhY6/ZfEAAAAXDNwdOAAAEeoAAAABAAAAAAAAAAAAAAAAAAAAC2ZlZC5uZXR3b3JrAAEAAAAAAAAAAAAAAAAAAAA="
+  "hash": "ab2391d09a662b3d94ee274f54015542906613034142ad16dc35a69377836b5a",
+  "ledger": 654261,
+  "envelope_xdr": "AAAAAE3x9zlKwKeMIDSrLbtzYiunbO5Drk06RjCw2IJuQIcZAAAAZAAIScQAAAABAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAi8fAwnFjrnVjfFgRmYP9YMcYulQykFkCD5Kd7+0b6QgAAAAAAAAAADuaygAAAAAAAAAAAW5AhxkAAABA59dY2rInjjirjX43z8rStBUejRpUzxnELfZe4kiU55N0ms8TUxaG6iapCRXVFxR3PDbEqlUwzXvR/E31rnsQBw==",
+  "result_xdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
+  "result_meta_xdr": "AAAAAQAAAAIAAAADAAn7tQAAAAAAAAAATfH3OUrAp4wgNKstu3NiK6ds7kOuTTpGMLDYgm5AhxkAAAAXSHbnnAAIScQAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAn7tQAAAAAAAAAATfH3OUrAp4wgNKstu3NiK6ds7kOuTTpGMLDYgm5AhxkAAAAXSHbnnAAIScQAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAABAAAABAAAAAMACIU9AAAAAAAAAACLx8DCcWOudWN8WBGZg/1gxxi6VDKQWQIPkp3v7RvpCAAAABdIdugAAAiFPQAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEACfu1AAAAAAAAAACLx8DCcWOudWN8WBGZg/1gxxi6VDKQWQIPkp3v7RvpCAAAABeEEbIAAAiFPQAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAMACfu1AAAAAAAAAABN8fc5SsCnjCA0qy27c2Irp2zuQ65NOkYwsNiCbkCHGQAAABdIduecAAhJxAAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEACfu1AAAAAAAAAABN8fc5SsCnjCA0qy27c2Irp2zuQ65NOkYwsNiCbkCHGQAAABcM3B2cAAhJxAAAAAEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=="
 }
 ```
 
