@@ -165,12 +165,12 @@ At this point we are ready to build the transaction. The transaction is built ar
 From there we append a payment operation and specify the receiving address, amount, and asset we are sending. Using this notation we can append other types of operations as well. Then we call ```.build()``` to build the ```TransactionEnvelope``` and increment the source account's sequence number by 1. From there the ```TransactionEnvelope``` is signed with the source account's signing key and it gets submitted to Horizon and the response is printed to console. 
 
 The response includes: 
--```_links```
--```hash```
--```ledger```
--```envelope_xdr```
--```result_xdr```
--```result_meta_xdr```
+- ```_links```
+- ```hash```
+- ```ledger```
+- ```envelope_xdr```
+- ```result_xdr```
+- ```result_meta_xdr```
 
 One of the most important parts of this response is the ```result_xdr```. We can pass the ```result_xdr``` to the ```tx_success``` function written in the script to verify that the transaction was actually successful. This important because even failed transactions can be included in the ledger. 
 
