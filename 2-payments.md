@@ -118,15 +118,12 @@ To understand what's going on we first need to understand the ```send_payment()`
 
 ``` python
 def send_payment(signing_key, receiving_key, amount, asset='XLM'):
+    # Talk to testnet horizon instance
+    server = Server(horizon_url="https://horizon-testnet.stellar.org")
+    
     # Derive Keypair object and public key from the signing key (source account)
     source_keypair = Keypair.from_secret(signing_key)
     source_public_key = source_keypair.public_key
-
-    # Account receiving funds
-    receiving_key = receiving_key
-
-    # Talk to testnet horizon instance
-    server = Server(horizon_url="https://horizon-testnet.stellar.org")
 
     # Fetch the current sequence number for the source account from Horizon.
     source_account = server.load_account(source_public_key)
@@ -158,6 +155,12 @@ The first thing to highlight are the 4 variables that ```send_payment()``` takes
 - ```asset```
 
 These four inputs are all we need to make a simple lumen payment. The ```signing_key``` allows the sender, or source account, to sign off on the transaction with their private key. The ```receiving_key``` is the receiving user's public key. The ```amount```, is the amount of an asset we are sending, and ```asset``` specifies that we are sending lumens. 
+
+The first part of the function creates a server object and tells it to communicate with the public Horizon testnet instance. From the SDK's documentation: *Server handles the network connection to a Horizon instance and exposes an interface for requests to that instance.*
+
+The next part of function takes the ```signing_key``` and uses it to derive the source account's keypair. We do this so we can get the source accounts [sequence number](https://www.stellar.org/developers/guides/concepts/transactions.html#sequence-number) in order to build the transaction. Sequence numbers are associated with the source account sending a transaction and follow a strict ordering rule in order to prevent [double-spending](https://en.wikipedia.org/wiki/Double-spending). 
+
+At this point we are ready to build the transaction. The transaction is build around the ```source_account```, ```network_passphrase``` (which network is being used), and the ```base_fee``` - which is 100 stroops or 0.00001 XLM. Quick note on the fee, this is subject to change so it is generally best to check what the fee should be vs assuming the minimum. You can do this by using ```base_fee = server.fetch_base_fee()``` to get the latest [base fee](https://www.stellar.org/developers/guides/concepts/fees.html#base-fee) from the ledger. 
 
 Now that you have some experience creating and sending payments, try sending different amounts back and forth between your accounts and getting familar with the responses from Horizon.
 
