@@ -160,7 +160,21 @@ The first part of the function creates a server object and tells it to communica
 
 The next part of function takes the ```signing_key``` and uses it to derive the source account's keypair. We do this so we can get the source accounts [sequence number](https://www.stellar.org/developers/guides/concepts/transactions.html#sequence-number) in order to build the transaction. Sequence numbers are associated with the source account sending a transaction and follow a strict ordering rule in order to prevent [double-spending](https://en.wikipedia.org/wiki/Double-spending). 
 
-At this point we are ready to build the transaction. The transaction is build around the ```source_account```, ```network_passphrase``` (which network is being used), and the ```base_fee``` - which is 100 stroops or 0.00001 XLM. Quick note on the fee, this is subject to change so it is generally best to check what the fee should be vs assuming the minimum. You can do this by using ```base_fee = server.fetch_base_fee()``` to get the latest [base fee](https://www.stellar.org/developers/guides/concepts/fees.html#base-fee) from the ledger. 
+At this point we are ready to build the transaction. The transaction is built around the ```source_account```, ```network_passphrase``` (which network is being used), and the ```base_fee``` - which is 100 stroops or 0.00001 XLM. Quick note on the fee, this is subject to change so it is generally best to check what the fee should be vs assuming the minimum. You can do this by using ```base_fee = server.fetch_base_fee()``` to get the latest [base fee](https://www.stellar.org/developers/guides/concepts/fees.html#base-fee) from the ledger. 
+
+From there we append a payment operation and specify the receiving address, amount, and asset we are sending. Using this notation we can append other types of operations as well. Then we call ```.build()``` to build the ```TransactionEnvelope``` and increment the source account's sequence number by 1. From there the ```TransactionEnvelope``` is signed with the source account's signing key and it gets submitted to Horizon and the response is printed to console. 
+
+The response includes: 
+-```_links```
+-```hash```
+-```ledger```
+-```envelope_xdr```
+-```result_xdr```
+-```result_meta_xdr```
+
+One of the most important parts of this response is the ```result_xdr```. We can pass the ```result_xdr``` to the ```tx_success``` function written in the script to verify that the transaction was actually successful. This important because even failed transactions can be included in the ledger. 
+
+I cover XDRs in more depth in Chapter 7, but what's important to know for now is that XDRs are used to encode data and pass that data around the Stellar network. The ```tx_success()``` function decodes the ```result_xdr``` to let us know wether or not our transaction was successful. 
 
 Now that you have some experience creating and sending payments, try sending different amounts back and forth between your accounts and getting familar with the responses from Horizon.
 
