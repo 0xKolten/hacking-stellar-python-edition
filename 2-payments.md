@@ -28,7 +28,7 @@ Public key: GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E
 Private key: SCO4JEHDN2ZLIDZMZC62UR6Y5NICMTMRKBPG3JMBKI5AHVXJA46MY2VG
 ```
 
-To send our first payment from ```Account A``` to ```Account B```, we'll write a script that builds a transaction for our payment operation and checks if that transaction was successful - I'll explain how it all works in the next section:
+To send a lumen payment from ```Account A``` to ```Account B```, we'll write a script that builds a transaction for our payment operation, submits that transaction to Horizon (then the network), and checks if that transaction was successful - I'll explain how it all works in the next section:
 
 ``` python
 from stellar_sdk import Server, Keypair, TransactionBuilder, Network
@@ -77,12 +77,16 @@ def send_payment(signing_key, receiving_key, amount, asset='XLM'):
     print(json.dumps(response, indent=2))
 
 if __name__ == '__main__':
+    # Use your own keys here!
     # Account A Signing Key: SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV
     # Account B Public Key: GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E
     send_payment('SBCQT2KDQNBP3H4ONGLCY2QRD2EXDMVG7REODUIPWRBTENAIGCHTBD6V', 'GCCNQCV26F4DZVOOKQBNZBW7JNXDRNHNCSVGYQOXKX27RWEAXWCMH3IZ', '100')
  ```
 
-Run the script and if everything went according to plan, you should've gotten a response like this:
+**Note:** When you run the script you'll have to wait a few seconds for your transaction to get added to the [ledger](https://www.stellar.org/developers/guides/concepts/ledger.html). The ledger represents the current state of the Stellar network and includes information about accounts, balances, orders in the distributed exchange, and any other data that persists. Submitting a transaction to the network is *writing* to the ledger and changing the state of the network. 
+
+After running the script, if everything went according to plan you should've gotten a response like this:
+
 ``` json
 Transaction result: txSUCCESS
 {
@@ -99,7 +103,9 @@ Transaction result: txSUCCESS
 }
 ```
 
-Now we can use the ```show_balance()``` script that we created last chapter and take a look at both account balances:
+Thanks to the ```tx_success()``` function printing it's result to console, you can see the the transaction was a success. Additonally, through the response we received from Horizon you can see that it was included in ```"ledger": 654261```. 
+
+Now we can plug in each public key to the ```show_balance()``` script that we created last chapter and take a look at both account balances:
 
 ```
 Account A
@@ -110,7 +116,7 @@ Account B
 Lumen Balance: 10100.0000000 XLM
 ```
 
-Perfect, it worked 😎 Let's break down what we did.
+Perfect, it worked 😎 Let's break down what this script did.
 
 ### Unpacking the Payment
 
@@ -172,11 +178,11 @@ The response includes:
 - ```result_xdr```
 - ```result_meta_xdr```
 
-One of the most important parts of this response is the ```result_xdr```. We can pass the ```result_xdr``` to the ```tx_success``` function written in the script to verify that the transaction was actually successful. This important because even failed transactions can be included in the ledger. 
+One of the important parts of this response is the ```result_xdr```, this piece of encoded data gives us information about the result of a transaction. We can pass the ```result_xdr``` to the ```tx_success()``` function written in the script to verify that the transaction was actually successful. This important because even failed transactions can be included in the ledger. 
 
-I cover XDRs in more depth in Chapter 7, but what's important to know for now is that XDRs are used to encode data and pass that data around the Stellar network. The ```tx_success()``` function decodes the ```result_xdr``` to let us know wether or not our transaction was successful. 
+I cover XDRs in more depth in Chapter 7, but what's important to know for now is that XDRs are used to encode data and pass that data around the Stellar network. The ```tx_success()``` function decodes the ```result_xdr``` and prints the result code to console. 
 
-Now that you have some experience creating and sending payments, try sending different amounts back and forth between your accounts and getting familar with the responses from Horizon.
+Now that you have some experience creating and sending payments, try sending different amounts back and forth between your accounts, checking the balances, and getting familar with the responses from Horizon.
 
 Next we'll learn about Stellar assets and create one of our own.
 
