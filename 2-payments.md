@@ -164,11 +164,11 @@ These four inputs are all we need to make a simple lumen payment. The ```signing
 
 The first part of the function creates a server object and tells it to communicate with the public Horizon testnet instance. From the SDK's documentation: *Server handles the network connection to a Horizon instance and exposes an interface for requests to that instance.*
 
-The next part of function takes the ```signing_key``` and uses it to derive the source account's keypair. We do this so we can get the source accounts [sequence number](https://www.stellar.org/developers/guides/concepts/transactions.html#sequence-number) in order to build the transaction. Sequence numbers are associated with the source account sending a transaction and follow a strict ordering rule in order to prevent [double-spending](https://en.wikipedia.org/wiki/Double-spending). 
+The next part of function takes the ```signing_key``` and uses it to derive the source account's keypair. We do this so we can get the source accounts [sequence number](https://www.stellar.org/developers/guides/concepts/transactions.html#sequence-number) in order to build the transaction. Each account has a sequence number that follows a strict ordering rule in order to prevent [double-spending](https://en.wikipedia.org/wiki/Double-spending). 
 
-At this point we are ready to build the transaction. The transaction is built around the ```source_account```, ```network_passphrase``` (which network is being used), and the ```base_fee``` - which is 100 stroops or 0.00001 XLM. Quick note on the fee, this is subject to change so it is generally best to check what the fee should be vs assuming the minimum. You can do this by using ```base_fee = server.fetch_base_fee()``` to get the latest [base fee](https://www.stellar.org/developers/guides/concepts/fees.html#base-fee) from the ledger. 
+At this point we are ready to build the transaction. The transaction is built around the ```source_account```, ```network_passphrase``` (which network is being used), and the ```base_fee``` - which is 100 stroops or 0.00001 XLM. Quick note on the fee, this is subject to change so it is generally best to check what the fee should be vs assuming the minimum like I do here. You can do this by using ```base_fee = server.fetch_base_fee()``` to get the latest [base fee](https://www.stellar.org/developers/guides/concepts/fees.html#base-fee) from the ledger. 
 
-From there we append a payment operation and specify the receiving address, amount, and asset we are sending. Using this notation we can append other types of operations as well. Then we call ```.build()``` to build the ```TransactionEnvelope``` and increment the source account's sequence number by 1. From there the ```TransactionEnvelope``` is signed with the source account's signing key and it gets submitted to Horizon and the response is printed to console. 
+From there we append a payment operation and specify the receiving address, amount, and asset we are sending. . Then we call ```.build()``` to build the ```TransactionEnvelope``` and increment the source account's sequence number by 1. From there the ```TransactionEnvelope``` is signed with the source account's private key and it gets submitted to Horizon. The response is then printed to console for us to dissect. 
 
 The response includes: 
 - ```_links```
@@ -178,7 +178,7 @@ The response includes:
 - ```result_xdr```
 - ```result_meta_xdr```
 
-One of the important parts of this response is the ```result_xdr```, this piece of encoded data gives us information about the result of a transaction. We can pass the ```result_xdr``` to the ```tx_success()``` function written in the script to verify that the transaction was actually successful. This important because even failed transactions can be included in the ledger. 
+One of the important parts of this response is the ```result_xdr```, this piece of encoded data gives us information about the result of a transaction. We can pass the ```result_xdr``` to the ```tx_success()``` function written in the script to verify that the transaction was actually successful. This is important because even failed transactions can be included in the ledger. 
 
 I cover XDRs in more depth in Chapter 7, but what's important to know for now is that XDRs are used to encode data and pass that data around the Stellar network. The ```tx_success()``` function decodes the ```result_xdr``` and prints the result code to console. 
 
