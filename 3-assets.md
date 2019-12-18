@@ -7,15 +7,15 @@
 
 For the official documentation on assets - [go here](https://www.stellar.org/developers/guides/concepts/assets.html).
 
-One unique feature of the Stellar network is that it can be used to trade, hold, and transfer any type of asset. If you can tokenize it or represent it as a number in a database, it can be issued as credit and used on Stellar (e.g. dollars, cryptocurrencies, security tokens, etc.).
+One unique feature of the Stellar network is that it can be used to trade, hold, and transfer any type of asset. If you can represent it as a number in a database, it can be issued as a token and used on Stellar (e.g. dollars, cryptocurrencies, security tokens, etc.).
 
 All assets on Stellar have an **asset code** (e.g. USD) and an **issuer account** (who created the token). Lumens are the only asset that *do not* have an issuer account. Assets can also have flags associated with them such as ```AUTHORIZATION REQUIRED``` and ```AUTHORIZATION REVOCABLE```. These flags allow asset issuers to have more control over their issued assets to adhere with compliance, improve customer security, etc.
 
-Before we create an asset there's two concepts we should understand first: **anchors** and **trustlines**.
+Before creating an asset there's two concepts that need explaining: **anchors** and **trustlines**.
 
 ### Anchors (Asset Issuers)
 
-In simplest terms, anchors are entities that issue assets on Stellar. [Anchors](https://github.com/koltenb/awesome-stellar/blob/master/README.md#stellar-asset-issuers-anchors) can range from individuals to commercial banks. Generally, anchors take deposits from users and issue those deposits on the Stellar network as credit. For example, I can deposit $100 in to [AnchorUSD](https://www.anchorusd.com/) and receive the equivalent amount of [USD tokens/credit](https://stellar.expert/explorer/public/asset/USD-GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX) on Stellar. When I'm ready to redeem those USD tokens I can withdraw them back in to my bank account through AnchorUSD.
+In simplest terms, anchors are entities that issue assets on Stellar. [Anchors](https://github.com/koltenb/awesome-stellar/blob/master/README.md#stellar-asset-issuers-anchors) can range from individuals to commercial banks. Generally, anchors take deposits from users and issue those deposits on the Stellar network as a token (or a credit). For example, I can deposit $100 in to [AnchorUSD](https://www.anchorusd.com/) and receive the equivalent amount of [USD tokens/credit](https://stellar.expert/explorer/public/asset/USD-GDUKMGUGDZQK6YHYA5Z6AY2G4XDSZPSZ3SW5UN3ARVMO6QSRDWP5YLEX) on Stellar. When I'm ready to redeem those USD tokens I can withdraw them back in to my bank account through AnchorUSD.
 
 ### Trustlines
 
