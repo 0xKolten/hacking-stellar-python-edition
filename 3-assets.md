@@ -125,60 +125,116 @@ Transaction result: txSUCCESS
 }
 ```
 
-Lastly, we'll repurpose our payment script to send KOOL Tokens, instead of lumens, from ```Account A``` to ```Account B```:
-
-**Note**: Since we aren't sending lumens, we must specify the asset code and who the asset issuer is when adding the payment operation.
+Next, we should repurpose the payment script created earlier so that it can send more assets besides lumens. This will allow us to send ```HACK``` tokens from the issuing account to the distributing account. 
 
 ``` python
-from stellar_base.builder import Builder
+from stellar_sdk import Server, Keypair, TransactionBuilder, Network
+from stellar_sdk.xdr import Xdr
+from stellar_sdk.xdr.StellarXDR_const import TransactionResultCode
 import json
+import base64
 
-def send_asset(signing_key, receiving_key, amount):
-    builder = Builder(secret=signing_key, horizon_uri='https://horizon-testnet.stellar.org' , network='testnet') \
-        .append_payment_op(destination=receiving_key, asset_code='KOOL', amount=amount, asset_issuer='GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF') \
-    # Sign and submit transaction -> print response
-    builder.sign()
-    response = builder.submit()
-    print(json.dumps(response, indent = 2))
+def tx_success(result_xdr):
+    xdr_decoded = base64.b64decode(result_xdr.encode())
+    unpacker = Xdr.StellarXDRUnpacker(xdr_decoded)
+    xdr_obj = unpacker.unpack_TransactionResult()
+    print('Transaction result:', TransactionResultCode.get(xdr_obj.result.code))
+
+def send_payment(signing_key, receiving_key, amount, asset='XLM', asset_issuer=None):
+    # Talk to testnet horizon instance
+    server = Server(horizon_url="https://horizon-testnet.stellar.org")
+
+    # Derive Keypair object and public key from the signing key (source account)
+    source_keypair = Keypair.from_secret(signing_key)
+    source_public_key = source_keypair.public_key
+
+    # Fetch the current sequence number for the source account from Horizon.
+    source_account = server.load_account(source_public_key)
+
+    # Build transaction
+    transaction = (
+        TransactionBuilder(
+            source_account=source_account,
+            network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
+            base_fee=100,
+        )
+        .append_payment_op(receiving_key, amount, asset, asset_issuer)
+        .build()
+    )
+
+    transaction.sign(source_keypair)
+
+    # Submit the transaction to Horizon and check if successful
+    response = server.submit_transaction(transaction)
+    result_xdr = response.get('result_xdr')
+    tx_success(result_xdr)
+    print(json.dumps(response, indent=2))
 
 if __name__ == '__main__':
-    send_asset('SDRRZ2JQBI3RQSHV4Q63YWWJOVFNSXE2R6YSQKGUIPY65UATGUZUX4BB', 'GACNGVOSMX7NUBKUEPU26FQ2ROQZRVZ6IGGPESEHNGEKNRS55OUWU2YG', '100')
+    """
+    Account A (Issuer)
+    Public key: GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR
+    Private key: SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV
+
+    Account B (Distributor)
+    Public key: GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E
+    Private key: SCO4JEHDN2ZLIDZMZC62UR6Y5NICMTMRKBPG3JMBKI5AHVXJA46MY2VG
+    """
+
+    send_payment('SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV', 'GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E', '10000', 'HACK', 'GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR')
 ```
 
-Finally, we can adjust the script we used to read account balances to include the KOOL Token balance. Since ```Account B``` should only have two assets (lumens and KOOL Tokens), we can grab the first balance on the list to get the KOOL Token balance:
+In the new version of the send payment script only two things need changing: 
+
+```python
+def send_payment(signing_key, receiving_key, amount, asset='XLM', asset_issuer=None)
+```
+
+This change adds an asset issuer to the ```send_payment()``` function. The is necessary because all assets on the network, besides lumens, have a unique issuing address. To ensure that you are sending the correct asset, the asset code *and* its associated asset issuer must be provided. Otherwise various things can cause the transaction to fail. I set the ```assets``` default to ```XLM``` and the ```asset_issuer``` default to ```None``` so this script can still be used to send a basic lumen payment. 
+
+The next change is: 
+
+```python
+.append_payment_op(receiving_key, amount, asset, asset_issuer)
+```
+
+Adding the ```asset_issuer``` to the payment operation is the last big step and is necessary for the reasons listed above. 
+
+Finally, don't forget to change your function call at the bottom of the script: 
+
+```python 
+send_payment('SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV', 'GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E', '10000', 'HACK', 'GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR')
+```
+
+This change specifies that we are sending 1,000 HACK tokens from the issuing account to the distributing account. 
+
+After running the script you should get a similar response to what we've seen before and should verify that the transacation was a success (```Transaction result: txSUCCESS```). 
+
+Once the transaction is successful, you can repurpose the script we made earlier to check an account's balances: 
 
 ``` python
-from stellar_base.address import Address
+from stellar_sdk import Server
 
-def show_address_data(public_key):
-    address = Address(address = public_key, secret = None, network='testnet')
-    address.get()
-
-    print("Public key:", address.id)
-    print("Last modified ledger:", address.last_modified_ledger)
-    print("Lumen Balance:", address.balances[-1]['balance'])
-    print("KOOL Balance:", address.balances[0]['balance'])
+def show_balance(public_key):
+    server = Server(horizon_url='https://horizon-testnet.stellar.org')
+    address = server.accounts().account_id(public_key).call()
+    for balance in address['balances']:
+        if 'asset_code' in balance:
+            print(balance['asset_code'], "balance:", balance['balance'])
+        else:
+            print('XLM balance:', address['balances'][-1]['balance'])
 
 if __name__ == '__main__':
-    show_address_data('GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF')
+    show_balance('GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E')
 ```
 
-Unless you specified a different amount, ```Account B``` should return a balance of 100 KOOL Tokens:
-
-```
-Public key: GACNGVOSMX7NUBKUEPU26FQ2ROQZRVZ6IGGPESEHNGEKNRS55OUWU2YG
-Last modified ledger: 85623
-Lumen Balance: 10199.9999900
-KOOL Balance: 100.0000000
-```
-
-Congrats, you're 100 KOOL richer! 💰
+The big change in this script compared to the previous version is that it loops through all of the available balances that an account has. In the loop, we check to see if any balances include an ```asset_code```, if so, it prints the associated balance. After going through the custom assets, it then prints the lumen balance because lumen balances do not have an associated asset code. Easy stuff :) 
 
 ### Assets Continued
 
-One thing you might notice if you try to read the balance of ```Account A``` is that there is no balance for KOOL Tokens. In most cases, anchors like to create two accounts - where one serves as an issuer account and one as a distributor account. Distributor accounts are often used to seperate the logic between issuance and distribution and to create a limited supply and/or provide transparency about supply to customers and Stellar users.
+One thing you might notice if you try to read the balance of ```Account A``` is that there is no balance for ```HACK``` tokens. This is because issuing accounts don't maintain a balance on Stellar for the assets they are issuing. Since anyone can extend a trustline to anyone else, for some arbitrary token, balances and outstanding supply aren't created until the trustline is *acted upon*. In order for the token to actually exist, the issuer has to send tha token to someone. 
 
-There are some best practices that we didn't adhere to for simplicity. If you're genuinely interested in issuing a Stellar asset I recommend going through a few pieces of documentation:
+If you're interested in issuing a Stellar asset I recommend going through a few pieces of documentation:
 - [Custom Assets](https://www.stellar.org/developers/guides/walkthroughs/custom-assets.html)
 - [Issuing Assets](https://www.stellar.org/developers/guides/issuing-assets.html)
 - [Assets](https://www.stellar.org/developers/guides/concepts/assets.html)
