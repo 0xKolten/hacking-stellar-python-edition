@@ -7,13 +7,15 @@
 
 For the official documentation on the Stellar decentralized exchange (SDEX) - [go here](https://www.stellar.org/developers/guides/concepts/exchange.html).
 
-Not only can you issue, send, and receive assets on Stellar - you can trade them on the Stellar decentralized exchange.
+Not only can you issue, send, and receive assets on Stellar - you can trade them on the Stellar [decentralized exchange](https://youtu.be/2L8-lrmzeWk).
 
 Along with account balances, the Stellar ledger also stores buy and sell offers made by accounts. Accounts can make offers using the ```Manage Buy Offer``` or ```Manage Sell Offer``` operations. When a user makes an offer, it is checked against the existing order book for that pair. If it doesn't cross an existing order, it is added to the orderbook until the offer is taken or cancelled. To understand some of the concepts, we'll explore the SDEX orderbook then submit an order of our own.
 
+**Note:** For some of the scripts below we will be using the [requests](https://requests.readthedocs.io/en/master/) library. 
+
 ### The Orderbook
 
-Horizon has an ```/order_book``` endpoint that can be used to retrieve data about specific trading pairs. All of the arguments can be found [here](https://www.stellar.org/developers/horizon/reference/endpoints/orderbook-details.html). In this example, we'll write a script that gets 5 bids and 5 asks for the USD (AnchorUSD) / XLM pair by providing the following arguments:
+For this section we don't need the Python SDK - we can just interface with the Horizon API directly. Horizon has an ```/order_book``` endpoint that can be used to retrieve data about specific trading pairs. All of the arguments can be found [here](https://www.stellar.org/developers/horizon/reference/endpoints/orderbook-details.html). In this example, we'll write a script that gets 5 bids and 5 asks for the USD (AnchorUSD) / XLM pair by providing the following arguments:
 
 ``` selling_asset_type=credit_alphanum4 ```
 
@@ -108,48 +110,85 @@ I've also written a similar tutorial on Medium called [Explore Stellar Addresses
 
 ### Creating an Offer
 
-To expirement with creating an offer, I headed over to [testnet.interstellar.exchange](https://testnet.interstellar.exchange/app/#/markets/guest) (a UI for the testnet SDEX) to find an asset to trade. In this case I'll be trading my lumens for a token called "FEE," but you may choose any others that you find.
+To expirement with creating an offer and to save some time, I headed over to [testnet.interstellar.exchange](https://testnet.interstellar.exchange/app/#/markets/guest) (a UI for the testnet SDEX) to find an asset to trade. In this case I'll be trading my lumens for a token called "STR," but you may choose any others that you find on the market.
 
-By looking at the order book, I noticed a user selling FEE tokens for 5.9 lumens each. For simplicity, I'll take the other side of the trade and buy 10 FEE tokens.
+By looking at the order book, I noticed I could buy about 933 STR for 1.988 XLM each. Sounds like an okay deal so I'll take it. 
 
-**Note**: Remember that in order to hold FEE tokens we have to trust the asset issuer provided by Interstellar.Exchange: ```GDZZDS3QVBP2UMO2FFNXUJLDAQHFNFUQSJSROI3HWVCPKZ7YIFMTXLLY```. In this example we'll use both a ```Change Trust``` operation and a ```Manage Buy Offer``` operation in our transaction.
+**Note**: Remember that in order to hold STR tokens we have to trust the asset issuer provided by Interstellar.Exchange: ```GBEYFNS6KJRFEI22X5OBUFKQ5LK7Z2FZVFMAXBINC2SOCKA25AS62PUN```. In this example we'll use both a ```Change Trust``` operation and a ```Manage Buy Offer``` operation in our transaction.
 
-Since ```Account B``` already has KOOL tokens from last chapter, I'll use ```Account A``` to hold the FEE tokens instead:
+Since ```Account B``` already has HACK tokens from last chapter, I'll use ```Account A``` to hold the STR tokens:
 
 ```
-Public key: GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF
-Private key: SDRRZ2JQBI3RQSHV4Q63YWWJOVFNSXE2R6YSQKGUIPY65UATGUZUX4BB
+Public key: GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR
+Private key: SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV
 ```
 
-As before, we'll use the Builder object provided by the Python Stellar SDK and append the two operations we need included in our transaction. ```.append_change_trust_op()``` should look familiar, fill in the relevant info to set a trustline for the FEE token. Using ```.append_manage_buy_offer_op()```, we can specify that we are selling lumens, buying FEE tokens, looking to buy 10 FEE tokens, and the price (in lumens) we are willing to pay per FEE token.
+Your script will look something like this. Don't worry, I'll explain how it works below: 
 
 ``` python
-from stellar_base.builder import Builder
+from stellar_sdk import Server, Keypair, TransactionBuilder, Network
+from stellar_sdk.xdr import Xdr
+from stellar_sdk.xdr.StellarXDR_const import TransactionResultCode
 import json
+import base64
 
-def trust_and_buy(signing_key, asset_code, asset_issuer):
-    builder = Builder(secret=signing_key, horizon_uri='https://horizon-testnet.stellar.org' , network='testnet') \
-        .append_change_trust_op(asset_code, asset_issuer) \
-        .append_manage_buy_offer_op(selling_code='XLM', selling_issuer=None, buying_code=asset_code, buying_issuer=asset_issuer, amount='10', price='5.9')
-    # Sign and submit transaction -> print response
-    builder.sign()
-    response = builder.submit()
-    print(json.dumps(response, indent = 2))
+def tx_success(result_xdr):
+    xdr_decoded = base64.b64decode(result_xdr.encode())
+    unpacker = Xdr.StellarXDRUnpacker(xdr_decoded)
+    xdr_obj = unpacker.unpack_TransactionResult()
+    print('Transaction result:', TransactionResultCode.get(xdr_obj.result.code))
+
+def trust_buy_asset(signing_key, asset_code, asset_issuer, amount, price):
+    # Talk to testnet horizon instance
+    server = Server(horizon_url='https://horizon-testnet.stellar.org')
+
+    # Derive Keypair object and public key from the signing key (source account)
+    source_keypair = Keypair.from_secret(signing_key)
+    source_public_key = source_keypair.public_key
+
+    # Fetch the current sequence number for the source account from Horizon.
+    source_account = server.load_account(source_public_key)
+
+    # Build transaction
+    transaction = (
+        TransactionBuilder(
+            source_account=source_account,
+            network_passphrase=Network.TESTNET_NETWORK_PASSPHRASE,
+            base_fee=100,
+        )
+        .append_change_trust_op(asset_code, asset_issuer)
+        .append_manage_buy_offer_op('XLM', None, asset_code, asset_issuer, amount, price)
+        .build()
+    )
+
+    transaction.sign(source_keypair)
+
+    # Submit the transaction to Horizon and check if successful
+    response = server.submit_transaction(transaction)
+    result_xdr = response.get('result_xdr')
+    tx_success(result_xdr)
+    print(json.dumps(response, indent=2))
 
 if __name__ == '__main__':
-    trust_and_buy('SDRRZ2JQBI3RQSHV4Q63YWWJOVFNSXE2R6YSQKGUIPY65UATGUZUX4BB', 'FEE', 'GDZZDS3QVBP2UMO2FFNXUJLDAQHFNFUQSJSROI3HWVCPKZ7YIFMTXLLY')
+    """
+    Account A
+    Public key: GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR
+    Private key: SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV
+    """
+
+    trust_buy_asset('SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV', 'STR', 'GBEYFNS6KJRFEI22X5OBUFKQ5LK7Z2FZVFMAXBINC2SOCKA25AS62PUN', '933', '1.988')
 ```
 
-After submitting the transaction and verifying that it was successful, we can repurpose our script that reads account balances and check ```Account A```'s:
+As before, we'll use the transaction builder provided by the Python SDK and append the two operations we need included in our transaction. ```.append_change_trust_op()``` should look familiar, fill in the relevant info to set a trustline for the STR token (or token of your choice). Using ```.append_manage_buy_offer_op()```, we can specify that we are selling lumens, buying STR tokens, looking to buy 933 STR tokens, and the price (in lumens) we are willing to pay per STR token. You'll notice that after specifying that we selling lumens, we pass in ```None```. This is because lumens *do not* have an issuing address like other assets. 
+
+**Remember:** It is only necessary to trust assets once. For the sake of simplicity I included a change trust operation in the script below even though this is not the most optimal set up. 
+
+After submitting the transaction and verifying that it was successful, we can read the balance of ```Account A``` and find that we are now the owner of 933 STR tokens: 
 
 ```
-Public key: GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF
-Last modified ledger: 101402
-Lumen Balance: 9740.9999400
-FEE Balance: 10.0000000
+STR balance: 933
+XLM balance: 8,045.19596 
 ```
-
-If your order was filled, you should now be the owner of 10 FEE tokens!
 
 **Note**: There are many other ways to expirement and explore with the Stellar decentralized exchange that are not covered here. I highly encourage anyone interested in the SDEX to dive in to the documentation and APIs to get fully acclimated. You can also look around on SDEX UIs such as [StellarX](https://www.stellarx.com/markets) or [StellarPort](https://stellarport.io/exchange/) to see the SDEX in action.   
 
