@@ -10,7 +10,7 @@ Since the following chapters only use Python you should make sure you have Pytho
 
 Most importantly, if you have never written, compiled, or run Python scripts before ***please*** read this blog before getting started—[How to Run Your Python Scripts](https://realpython.com/run-python-scripts/). This will save you from a lot of headaches. 
 
-Next, you should install the [Python Stellar SDK](https://github.com/StellarCN/py-stellar-base), sepcifically Version 2.0. The version is important because Version 2.0 *is not* compatible with versions before it. The Python Stellar SDK is a Python library for interfacing with a [Horizon API](https://horizon.stellar.org/)—if you don't know what this is yet no worries, we'll get there.
+Next, you should install the [Python Stellar SDK](https://github.com/StellarCN/py-stellar-base), specifically Version 2.0. The version is important because Version 2.0 *is not* compatible with versions before it. The Python Stellar SDK is a Python library for interfacing with a [Horizon API](https://horizon.stellar.org/)—if you don't know what this is yet no worries, we'll get there.
 
 To install the SDK, you can open up your command line and type the command:
 
