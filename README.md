@@ -1,13 +1,17 @@
 <div align="center"><img width="75%" src="imgs/Hacking-Stellar-Python.png"></div>
 <br>
 
-# 💻 Hacking Stellar (Python Edition)
+# 💻 Hacking Stellar (Python Edition) - Early Release
 
 Hacking Stellar (Python Edition) is an open-source e-book on the basics of the Stellar network. It is very much based on and inspired by the e-book Hacking Stellar by 0xfe - except with an emphasis on Python 🐍
+
+**Note:** As it stands, this is an early release and will likely be a "living" e-book. Features of the Stellar network and features of the Python Stellar SDK are subject to change over time. 
 
 ### What Hacking Stellar Will Teach You
 
 Hacking Stellar will teach you the basics of what you need to know when you start building on Stellar. It will provide scripts and code snippets along the way that will serve as examples as you continue with your experience. Hacking Stellar can also be useful for those looking to dive a little deeper in to some of the technical details surrounding Stellar. 
+
+It will *not* teach you how to build fleshed out applications or the more advanced concepts around the Stellar network such as account funding or key storage. 
 
 **Prerequisites:**
   - [Basic Understanding of Stellar](https://www.lumenauts.com/courses/stellar-overview-course)
