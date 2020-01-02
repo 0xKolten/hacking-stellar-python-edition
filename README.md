@@ -39,6 +39,9 @@ Fundamentally, Stellar is a system for tracking ownership. It uses an accounting
 - [Chapter 7. External Data Representation (XDR)](7-xdr.md)
 
 ### Credits
+
+Special thanks to [Overcat](https://github.com/overcat) for answering my questions over the past several months while I was putting this together. 
+
 [Hacking Stellar](https://github.com/0xfe/hacking-stellar) by [0xfe](https://github.com/0xfe)
 
 [Stellar Development Guides](https://www.stellar.org/developers/guides/)
