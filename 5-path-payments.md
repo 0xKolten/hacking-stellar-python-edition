@@ -17,7 +17,7 @@ As I mentioned before, a path payment traverses a path of offers (up to 6) until
 
 Let's see how we can find a path between two assets. In this example I'll be using what is called a [Strict Receive Payment Path](https://www.stellar.org/developers/horizon/reference/endpoints/path-finding-strict-receive.html). A strict receive payment path allows a user to specify the amount of the asset being receieved. The amount sent will vary based on offers in the order books. The alternative is a [Strict Send Payment Path](https://www.stellar.org/developers/horizon/reference/endpoints/path-finding-strict-send.html) and is simply the opposite of what we're using. 
 
-```python 
+``` python 
 import requests
 import json
 
@@ -35,6 +35,24 @@ if __name__ == '__main__':
     receiving_key = 'GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR'
     sending_key = 'GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E'
     path_payment(sending_key, 'STR', str_issuer, '5', receiving_key)
+```
+
+``` json
+{
+  "_embedded": {
+    "records": [
+      {
+        "source_asset_type": "native",
+        "source_amount": "9.9600000",
+        "destination_asset_type": "credit_alphanum4",
+        "destination_asset_code": "STR",
+        "destination_asset_issuer": "GBEYFNS6KJRFEI22X5OBUFKQ5LK7Z2FZVFMAXBINC2SOCKA25AS62PUN",
+        "destination_amount": "5.0000000",
+        "path": []
+      }
+    ]
+  }
+}
 ```
 
 ### Constructing a Path Payment
