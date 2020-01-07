@@ -113,7 +113,7 @@ def path_payment(signing_key, asset_code, asset_issuer, amount, receiving_key):
     send_max = path_search['_embedded']['records'][0]['source_amount']
     path = path_search['_embedded']['records'][0]['path']
 
-    # BUILD TRANSACTION
+    # LET'S CREATE THAT TRANSACTION
     # Fetch the current sequence number for the source account from Horizon.
     source_account = server.load_account(source_public_key)
 
