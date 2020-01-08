@@ -1,6 +1,6 @@
 [Home](README.md) - [Chapter 1](1-accounts.md) - [Chapter 2](2-payments.md) - [Chapter 3](3-assets.md) - [Chapter 4](4-decentralized-exchange.md) - [Chapter 5](5-path-payments.md) - [Conclusion](6-conclusion.md) - [Bonus Chapter 1](bonus-xdr.md) - [Bonus Chapter 2](bonus-streaming.md)
 
-## Bonus Chapter - External Data Representation (XDR)
+## Chapter 6 - External Data Representation (XDR)
 
 For the official documentation on XDRs - [go here](https://www.stellar.org/developers/guides/concepts/xdr.html).
 
