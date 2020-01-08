@@ -206,4 +206,4 @@ First, ```Account A``` gets credited with 5 STR tokens and ```Account B``` is de
 
 While this path payment example was pretty straight forward I encourage you to try one that is more intricate. Try finding a longer path between some assets and see what happens!
 
-→ [XDRs](6-xdr.md)
+→ [Chapter 6 - XDRs](6-xdr.md)
