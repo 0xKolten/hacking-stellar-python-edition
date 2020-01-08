@@ -1,4 +1,4 @@
-[Home](README.md) - [Chapter 1](1-accounts.md) - [Chapter 2](2-payments.md) - [Chapter 3](3-assets.md) - [Chapter 4](4-decentralized-exchange.md) - [Chapter 5](5-path-payments.md) - [Chapter 7](bonus-xdr.md) - [Conclusion](7-conclusion.md)
+[Home](README.md) - [Chapter 1](1-accounts.md) - [Chapter 2](2-payments.md) - [Chapter 3](3-assets.md) - [Chapter 4](4-decentralized-exchange.md) - [Chapter 5](5-path-payments.md) - [Chapter 6](6-xdr.md) - [Conclusion](7-conclusion.md)
 
 ## Chapter 6 - External Data Representation (XDR)
 
@@ -54,3 +54,5 @@ Source account: b'GD7YLRC3YWR3SMVGY3TSQ2UL56D7SG3JDIGYPNYZ2G22HBMOX5S7CLYF'
 Sequence number: 19696720019457
 Fee: 200
 ```
+
+→ [Conclusion](7-conclusion.md)
