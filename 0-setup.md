@@ -2,6 +2,18 @@
 
 ## Chapter 0 - Setup
 
+### Housekeeping
+
+I mentioned some of this stuff in the prerequisites, but I wanted to mention them again to make sure we start off on the right foot.
+
+If you are new to Stellar, the best way to get a brief introduction is the [30 minute course](https://www.lumenauts.com/courses/stellar-overview-course) put together by [Lumenauts](https://www.lumenauts.com).
+
+Another resource you may find valuable is [Awesome Stellar](https://awesomestellar.com/)—a curated list of Stellar applications, blog posts, educational resources, tools, and more.
+
+Additionally, if it's been a while since you last worked with APIs and JSON responses, now would be a good time to go watch a quick refresher on YouTube. Here's one on [Rest APIs](https://youtu.be/7YcW25PHnAA) and here's one that covers [JSON](https://youtu.be/iiADhChRriM).
+
+Doing all this in preparation for Hacking Stellar should put you in a good place to get started. There are many additional resources shared throughout the chapters that are worth checking out and digging in to.
+
 ### Downloads
 
 Before we start writing any code and interfacing with the Stellar network, it's important that you have things set up and ready to go.
@@ -20,19 +32,6 @@ pip install stellar-sdk==2.0.0
 ```
 
 Lastly, the Python Stellar SDK's documentation can be found [here](https://stellar-sdk.readthedocs.io/en/latest/). The docs include code examples, descriptions of the objects and classes we'll use, and all the other good stuff you'll need to know. Much of the information presented throughout these chapters is a combination of the [SDK docs](https://stellar-sdk.readthedocs.io/en/latest/) and the [docs from Stellar.org](https://www.stellar.org/developers/guides/get-started/). Having these available to quickly reference will surely help along the way.
-
-
-### Housekeeping
-
-I mentioned some of this stuff in the prerequisites, but I wanted to mention them again to make sure we start off on the right foot.
-
-If you are new to Stellar, the best way to get a brief introduction is the [30 minute course](https://www.lumenauts.com/courses/stellar-overview-course) put together by [Lumenauts](https://www.lumenauts.com).
-
-Another resource you may find valuable is [Awesome Stellar](https://awesomestellar.com/)—a curated list of Stellar applications, blog posts, educational resources, tools, and more.
-
-Additionally, if it's been a while since you last worked with APIs and JSON responses, now would be a good time to go watch a quick refresher on YouTube. Here's one on [Rest APIs](https://youtu.be/7YcW25PHnAA) and here's one that covers [JSON](https://youtu.be/iiADhChRriM).
-
-Doing all this in preparation for Hacking Stellar should put you in a good place to get started. There are many additional resources shared throughout the chapters that are worth checking out and digging in to.
 
 Without further ado... Let's get started.
 
