@@ -35,8 +35,8 @@ Fundamentally, Stellar is a system for tracking ownership. It uses an accounting
 - [Chapter 3. Assets](3-assets.md)
 - [Chapter 4. Decentralized Exchange](4-decentralized-exchange.md)
 - [Chapter 5. Path Payments](5-path-payments.md)
-- [Chapter 6. Conclusion & More Resources](6-conclusion.md)
-- [Chapter 7. External Data Representation (XDR)](7-xdr.md)
+- [Chapter 6. External Data Representation (XDR)](6-xdr.md)
+- [Chapter 7. Conclusion & More Resources](7-conclusion.md)
 
 ### Credits
 
