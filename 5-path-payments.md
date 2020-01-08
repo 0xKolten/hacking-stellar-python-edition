@@ -1,4 +1,4 @@
-[Home](README.md) - [Chapter 1](1-accounts.md) - [Chapter 2](2-payments.md) - [Chapter 3](3-assets.md) - [Chapter 4](4-decentralized-exchange.md) - [Chapter 5](5-path-payments.md) - [Conclusion](6-conclusion.md) - [Bonus Chapter 1](bonus-xdr.md) - [Bonus Chapter 2](bonus-streaming.md)
+[Home](README.md) - [Chapter 1](1-accounts.md) - [Chapter 2](2-payments.md) - [Chapter 3](3-assets.md) - [Chapter 4](4-decentralized-exchange.md) - [Chapter 5](5-path-payments.md) - [Chapter 6](6-xdr.md) - [Conclusion](7-conclusion.md)
 
 ## Chapter 5 - Path Payments on Stellar
 
@@ -206,4 +206,4 @@ First, ```Account A``` gets credited with 5 STR tokens and ```Account B``` is de
 
 While this path payment example was pretty straight forward I encourage you to try one that is more intricate. Try finding a longer path between some assets and see what happens!
 
-→ [Conclusion & More Resources](6-conclusion.md)
+→ [XDRs](6-xdr.md)
