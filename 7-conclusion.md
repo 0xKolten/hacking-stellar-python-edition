@@ -1,6 +1,6 @@
 [Home](README.md) - [Chapter 1](1-accounts.md) - [Chapter 2](2-payments.md) - [Chapter 3](3-assets.md) - [Chapter 4](4-decentralized-exchange.md) - [Chapter 5](5-path-payments.md) - [Conclusion](6-conclusion.md) - [Bonus Chapter 1](bonus-xdr.md) - [Bonus Chapter 2](bonus-streaming.md)
 
-## Chapter 6 - Conclusion & More Resources
+## Chapter 7 - Conclusion & More Resources
 
 If you've made it all the way to the end congrats! Hopefully this has been a useful journey for you and I've done a decent job at covering the basic concepts around the Stellar network.
 
