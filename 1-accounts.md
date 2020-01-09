@@ -17,11 +17,11 @@ It's important that you keep your private key(s) secret to avoid getting your ac
 
 Extra reading: [Security Guide – How To Protect Yourself From Scammers](https://www.stellar.org/blog/stellar-security-guide-protect-scammers/).
 
-Another important distinction to make, is that accounts can exist on the Stellar main net (the one with real money) or they can exist on the Stellar testnet (using fake money). Throughout these chapters the accounts we create will exist on testnet, because that's what it's for.. testing! When creating Stellar applications, it is always best to start on testnet and move to main net later when you're ready for production. A quick guide on testnet ettiquite can be found [here](https://www.stellar.org/developers/guides/concepts/test-net.html).
+Another important distinction to make, is that accounts can exist on the Stellar mainnet (the one with real money) or they can exist on the Stellar testnet (using fake money). Throughout these chapters the accounts we create will exist on testnet, because that's what it's for.. testing! When creating Stellar applications, it is always best to start on testnet and move to mainnet later when you're ready for production. A quick guide on testnet ettiquite can be found [here](https://www.stellar.org/developers/guides/concepts/test-net.html).
 
 ### Create an Account
 
-Before we can do anything fun, we'll need a Stellar testnet account. Let's generate our first keypair with the following script:
+Before we can do anything fun, we'll need a Stellar account. Let's generate our first keypair with the following script:
 
 ``` python
 from stellar_sdk import Keypair
@@ -44,9 +44,11 @@ Public key: GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR
 Private key: SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV
 ```
 
-Awesome! We have an account, but before we can use it we need to register it with the testnet and fund it with lumens to satisfy the minimum account balance. (Be sure to **save the keys you generate** as we will be reusing them later.)
+Be sure to **save the keys you generate** somewhere liked a .txt file as we will be reusing them later.
 
-What are lumens? The lumen, often abbreviated XLM, is the protocol token of the Stellar network. Anyone that wants to hold or move money on Stellar must also hold lumens.
+Awesome! We have an account, but before we can use it we need to register it with the testnet and fund it with lumens to satisfy the minimum account balance. 
+
+What are lumens? The lumen, often abbreviated XLM, is the protocol token of the Stellar network aka the *native* currency of the network. Anyone that wants to hold or move money on Stellar must also hold lumens. They are generally used to pay fees, but are also a functional currency on the network. 
 
 **Note:** In order to prevent spam, Stellar requires accounts to maintain a minimum account balance that is calculated using the **base reserve** fee of 0.5 lumens. Minimum Account Balance = (2 + # of entries) * base reserve fee. Each additional entry reserves an additional 0.5 XLM. Entries include: trustlines, offers, signers, and data entries, but more on those later. 
 
@@ -54,7 +56,7 @@ Luckily [Friendbot](https://github.com/stellar/go/tree/master/services/friendbot
 
 https://friendbot.stellar.org/?addr=GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR 
 
-You should see a response that looks like this after visiting the link:
+You should see a response that looks like this after visiting the link with your address plugged in:
 
 ``` json
 {
@@ -96,7 +98,7 @@ Simply import the requests library, include the friendbot URL, and send the get 
 
 ### A Brief Horizon Overview 
 
-Before going further, I should quickly introduce the Horizon API because we'll be interfacing with it quiet a bit. In short, Horizon is an API server that allows you to submit transactions to the Stellar network, get account details, stream data from the network, and more. The most commonly used Horizon instances are https://horizon.stellar.org/ and https://horizon-testnet.stellar.org/ (the one we'll be using). These two are run and maintained by the Stellar Development Foundation, but other public facing Horizon APIs exist such as https://stellar-horizon.satoshipay.io/. 
+Before going further, I should quickly introduce the Horizon API because we'll be interfacing with it quiet a bit. Horizon is an API server that allows you to submit transactions to the Stellar network, get account details, stream data from the network, and more. The most commonly used Horizon instances are https://horizon.stellar.org/ and https://horizon-testnet.stellar.org/ (the one we'll be using). These two are run and maintained by the Stellar Development Foundation, but other public facing Horizon APIs exist such as https://stellar-horizon.satoshipay.io/. 
 
 Horizon has multiple endpoints that we can get information from such as: 
 - https://horizon-testnet.stellar.org/accounts/{account}
