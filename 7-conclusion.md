@@ -4,7 +4,7 @@
 
 If you've made it all the way to the end congrats! Hopefully this has been a useful journey for you and I've done a decent job at covering the basic concepts around the Stellar network.
 
-That being said, this e-book is definitely not a fully exhaustive introduction. There's still a lot of material that wasn't covered here and many things to learn in order to *fully* wrap your head around Stellar.
+That being said, this e-book is definitely not an exhaustive introduction. There's still a lot of material that wasn't covered here and many things to learn in order to *fully* wrap your head around Stellar.
 
 Thankfully we have a ton of resources available that'll make your life easier.
 
