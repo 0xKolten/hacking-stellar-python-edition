@@ -190,7 +190,7 @@ In the new version of the send payment script only two things need changing:
 def send_payment(signing_key, receiving_key, amount, asset='XLM', asset_issuer=None)
 ```
 
-This change adds an asset issuer to the ```send_payment()``` function. The is necessary because all assets on the network, besides lumens, have a unique issuing address. To ensure that you are sending the correct asset, the asset code *and* its associated asset issuer must be provided. Otherwise various things can cause the transaction to fail. I set the ```assets``` default to ```XLM``` and the ```asset_issuer``` default to ```None``` so this script can still be used to send a basic lumen payment. 
+This change adds an asset issuer to the ```send_payment()``` function. This is necessary because all assets on the network, besides lumens, have a unique issuing address. To ensure that you are sending the correct asset, the asset code *and* its associated asset issuer must be provided. Otherwise various things can cause the transaction to fail. I set the ```assets``` default to ```XLM``` and the ```asset_issuer``` default to ```None``` so this script can still be used to send a basic lumen payment. 
 
 The next change is: 
 
@@ -206,11 +206,11 @@ Finally, don't forget to change your function call at the bottom of the script:
 send_payment('SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV', 'GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E', '10000', 'HACK', 'GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR')
 ```
 
-This change specifies that we are sending 1,000 HACK tokens from the issuing account to the distributing account. 
+This change specifies that we are sending 10,000 HACK tokens from the issuing account to the distributing account. 
 
 After running the script you should get a similar response to what we've seen before and should verify that the transacation was a success (```Transaction result: txSUCCESS```). 
 
-Once the transaction is successful, you can repurpose the script we made earlier to check an account's balances: 
+Once the transaction is successful, you can repurpose the script we made earlier to check *all* of an account's balances: 
 
 ``` python
 from stellar_sdk import Server
@@ -228,11 +228,11 @@ if __name__ == '__main__':
     show_balance('GCF4PQGCOFR245LDPRMBDGMD7VQMOGF2KQZJAWICB6JJ337NDPUQR66E')
 ```
 
-The big change in this script compared to the previous version is that it loops through all of the available balances that an account has. In the loop, we check to see if any balances include an ```asset_code```, if so, it prints the associated balance. After going through the custom assets, it then prints the lumen balance because lumen balances do not have an associated asset code. Easy stuff :) 
+The big change in this script compared to the previous version is that it loops through all of the available balances that an account has. In the loop, we check to see if any balances include an ```asset_code```, if so, it prints the associated balance. After going through the custom assets, it then prints the lumen balance because lumen balances do not have an associated asset code. Easy stuff! 
 
 ### Assets Continued
 
-One thing you might notice if you try to read the balance of ```Account A``` is that there is no balance for ```HACK``` tokens. This is because issuing accounts don't maintain a balance on Stellar for the assets they are issuing. Since anyone can extend a trustline to anyone else, for some arbitrary token, balances and outstanding supply aren't created until the trustline is *acted upon*. In order for the token to actually exist, the issuer has to send tha token to someone. 
+One thing you might notice if you try to read the balance of ```Account A``` is that there is no balance for ```HACK``` tokens. This is because issuing accounts don't maintain a balance on Stellar for the assets they are issuing. Since anyone can extend a trustline to anyone else for some arbitrary token, balances and outstanding supply aren't created until the trustline is *acted upon*. In order for the token to actually exist, the issuer has to send that token to someone. 
 
 If you're interested in issuing a Stellar asset I recommend going through a few pieces of documentation:
 - [Custom Assets](https://www.stellar.org/developers/guides/walkthroughs/custom-assets.html)
