@@ -114,7 +114,7 @@ To expirement with creating an offer and to save some time, I headed over to [te
 
 By looking at the order book, I noticed I could buy about 933 STR for 1.988 XLM each. Sounds like an okay deal so I'll take it. 
 
-**Note**: Remember that in order to hold STR tokens we have to trust the asset issuer provided by Interstellar.Exchange: ```GBEYFNS6KJRFEI22X5OBUFKQ5LK7Z2FZVFMAXBINC2SOCKA25AS62PUN```. In this example we'll use both a ```Change Trust``` operation and a ```Manage Buy Offer``` operation in our transaction.
+**Note**: Remember that in order to hold STR tokens we have to trust the asset issuer provided by Interstellar.Exchange: ```GBEYFNS6KJRFEI22X5OBUFKQ5LK7Z2FZVFMAXBINC2SOCKA25AS62PUN```. In this example we'll use both a ```Change Trust``` operation and a ```Manage Buy Offer``` operation in our transaction. This concept of including multiple operations in one transaction is called *batching*. 
 
 Since ```Account B``` already has HACK tokens from last chapter, I'll use ```Account A``` to hold the STR tokens:
 
@@ -179,7 +179,11 @@ if __name__ == '__main__':
     trust_buy_asset('SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV', 'STR', 'GBEYFNS6KJRFEI22X5OBUFKQ5LK7Z2FZVFMAXBINC2SOCKA25AS62PUN', '933', '1.988')
 ```
 
-As before, we'll use the transaction builder provided by the Python SDK and append the two operations we need included in our transaction. ```.append_change_trust_op()``` should look familiar, fill in the relevant info to set a trustline for the STR token (or token of your choice). Using ```.append_manage_buy_offer_op()```, we can specify that we are selling lumens, buying STR tokens, looking to buy 933 STR tokens, and the price (in lumens) we are willing to pay per STR token. You'll notice that after specifying that we selling lumens, we pass in ```None```. This is because lumens *do not* have an issuing address like other assets. 
+The ```trust_buy_asset()``` function takes a a few arguments that we'll need: the source account's ```signing_key```, STR's ```asset_code```, the ```asset_issuer``` address of STR, the ```amount``` of STR we want to buy, and the ```price``` we are willing to pay (in lumens). 
+
+As before, we'll use the transaction builder provided by the Python SDK and append the two operations we need included in our transaction. ```.append_change_trust_op()``` should look familiar, fill in the relevant info to set a trustline for the STR token (or token of your choice - just like we did with the HACK token. 
+
+Using ```.append_manage_buy_offer_op()```, we can specify that we are selling lumens, buying STR tokens, looking to buy 933 STR tokens, and the price (in lumens) we are willing to pay per STR token. You'll notice that after specifying that we selling lumens, we pass in ```None```. This is because lumens *do not* have an issuing address like other assets. 
 
 **Remember:** It is only necessary to trust assets once. For the sake of simplicity I included a change trust operation in the script below even though this is not the most optimal set up. 
 
