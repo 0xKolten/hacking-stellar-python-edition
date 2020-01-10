@@ -4,6 +4,8 @@
 
 For the official documentation on XDRs - [go here](https://www.stellar.org/developers/guides/concepts/xdr.html).
 
+As you begin building on Stellar you'll notice these things called XDRs all over the place. They can be a little confusing at first but they're not so bad once you get the hang of it. XDRs contain a lot of valuable information for you to access and can even be used to build *pre-signed* transactions. 
+
 ### External Data Representation (XDR)
 
 In short, XDR is a standard for the description and encoding of data. On Stellar, the ledger, transactions, results, history, and messages passed between computers running stellar-core are encoded using XDR. The benefits of XDR are that it's very compact, data compacted using XDR can be reliably and predictibly stored, and XDR definitions include rich descriptions of data types and structures.
@@ -118,6 +120,6 @@ Sequence number: 2332905976102913
 Fee paid: 0.00001 XLM
 ```
 
-Now that you know the basics of XDRs you should have all of the foundational knowledge you need to dive deeper in to the Stellar network!
+Now that you know the basics of XDRs you should have all of the foundational knowledge you need to dive deeper in to the Stellar network! 
 
 → [Conclusion](7-conclusion.md)
