@@ -15,7 +15,7 @@ To show off how path payments work, I'll make use of the STR token from last cha
 
 As I mentioned before, a path payment traverses a path of offers (up to 6) until it is converted to the desired asset. In order to make path payments easier to construct, we can execute a path search using the ```/paths``` Horizon endpoint and use the response to prefill the ```Path Payment``` operation. 
 
-Let's see how we can find a path between two assets. In this example I'll be using what is called a [Strict Receive Payment Path](https://www.stellar.org/developers/horizon/reference/endpoints/path-finding-strict-receive.html). A strict receive payment path allows a user to specify the amount of the asset being receieved. The amount sent will vary based on offers in the order books. The alternative is a [Strict Send Payment Path](https://www.stellar.org/developers/horizon/reference/endpoints/path-finding-strict-send.html) and is simply the opposite of what we're using. 
+Let's see how we can find a path between two assets. In this example I'll be using what is called a [Strict Receive Payment Path](https://www.stellar.org/developers/horizon/reference/endpoints/path-finding-strict-receive.html). A strict receive payment path allows a user to specify the amount of the asset being receieved. The amount sent will vary based on offers in the order books. I don't do it in this example, but you can also specify a maximum amount that you are willing to send in order to protect your payment from bad orders. The alternative is a [Strict Send Payment Path](https://www.stellar.org/developers/horizon/reference/endpoints/path-finding-strict-send.html) and is simply the opposite of what we're using. 
 
 You can start by writing a script as so: 
 
