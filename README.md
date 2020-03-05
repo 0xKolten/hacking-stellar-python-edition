@@ -3,15 +3,15 @@
 
 # 💻 Hacking Stellar (Python Edition) - Early Release
 
-Hacking Stellar (Python Edition) is an open-source e-book on the basics of the Stellar network. It is very much based on and inspired by the e-book Hacking Stellar by 0xfe - except with an emphasis on Python 🐍
+Hacking Stellar (Python Edition) is an open-source e-book on the basics of the Stellar network. It is very much based on and inspired by the e-book [Hacking Stellar by 0xfe](https://github.com/0xfe/hacking-stellar) - except with an emphasis on Python 🐍
 
-**Early Release Note:** As it stands, this is an early release and will likely be a "living" e-book. Features of the Stellar network and features of the Python Stellar SDK are subject to change over time. Code is also likely to be improved or changed over time. 
+**Early Release Note:** As it stands, this is an early release and will likely be a "living" e-book. Features of the Stellar network and features of the Python Stellar SDK are subject (and likely) to change over time. Code is also likely to be improved or changed over time. 
 
 ### What Hacking Stellar Will Teach You
 
 Hacking Stellar will teach you the basics of what you need to know when you start building on Stellar. It will provide scripts and code snippets along the way that will serve as examples as you continue with your experience. Hacking Stellar can also be useful for those looking to dive a little deeper in to some of the technical details surrounding Stellar. 
 
-It will *not* teach you how to build fleshed out applications or the more advanced concepts around the Stellar network such as account funding, key storage, Stellar smart contracts, etc. 
+It will *not* teach you how to build fleshed out, production ready applications or the more advanced concepts around the Stellar network such as account funding, key storage, Stellar smart contracts, etc. 
 
 **Prerequisites:**
   - [Basic Understanding of Stellar](https://www.lumenauts.com/courses/stellar-overview-course)
@@ -26,7 +26,7 @@ It will *not* teach you how to build fleshed out applications or the more advanc
 
 ### What is Stellar?
 
-Fundamentally, Stellar is a system for tracking ownership. It uses an accounting ledger, shared across a network of independent computers, to store two important things for every account holder: what they own (their account balances) and what they want to do with what they own (operations on those balances, like buy or sell offers.) - [Stellar.org](https://stellar.org/overview)
+Stellar is an open-source network for currencies and payments. Stellar makes it easy to create, send and trade digital representations of all forms of money—dollars, pesos, bitcoin, pretty much anything. It’s designed so all the world’s financial systems can work together on a single network. - [Stellar.org](https://stellar.org/overview)
 
 ### Table of Contents
 - [Chapter 0. Setup](0-setup.md)
