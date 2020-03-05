@@ -13,15 +13,15 @@ Accounts are *identified* by a public key. Your public key is what you'll send y
 
 Accounts are *accessed* by a private key. In order for you to prove ownership of your account and use it to send a transaction (e.g. make a payment), you'll need to sign transactions with your private key. Following the username analogy, a private key is similar to a password except it is uniquely tied to your public key. I'd love to dive deeper and explain this myself, but public / private key cryptography is better explained via [this short video](https://youtu.be/GSIDS_lvRv4).
 
-It's important that you keep your private key(s) secret to avoid getting your account(s) compromised. Setting up [multi-sig](https://www.lumenauts.com/guides/how-to-set-up-a-multi-sig-wallet) will also increase your security.
+It's important that you keep your private key(s) secret to avoid getting your account(s) compromised. Setting up [multi-sig](https://www.lumenauts.com/guides/how-to-set-up-a-multi-sig-wallet) will also increase your security but I'll save that for another time.
 
 Extra reading: [Security Guide – How To Protect Yourself From Scammers](https://www.stellar.org/blog/stellar-security-guide-protect-scammers/).
 
-Another important distinction to make, is that accounts can exist on the Stellar mainnet (the one with real money) or they can exist on the Stellar testnet (using fake money). Throughout these chapters the accounts we create will exist on testnet, because that's what it's for.. testing! When creating Stellar applications, it is always best to start on testnet and move to mainnet later when you're ready for production. A quick guide on testnet ettiquite can be found [here](https://www.stellar.org/developers/guides/concepts/test-net.html).
+Another important distinction to make, is that accounts can exist on the Stellar mainnet (the one with real money) or they can exist on the Stellar testnet (using fake money). Throughout these chapters the accounts we create will exist on **testnet**, because that's what it's for.. testing! When creating Stellar applications, it is always best to start on testnet and move to mainnet later when you're ready for production. A quick guide on testnet ettiquite can be found [here](https://www.stellar.org/developers/guides/concepts/test-net.html).
 
 ### Create an Account
 
-Before we can do anything fun, we'll need a Stellar account. Let's generate our first keypair with the following script:
+Before we can do anything fun, we'll need a Stellar account. Let's generate our first keypair with the following script (```keypair.py```): 
 
 ``` python
 from stellar_sdk import Keypair
@@ -44,15 +44,15 @@ Public key: GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR
 Private key: SBK4EAZIWXELREKEXP4WB6DCCMJH7SGTEQE2BJALA32VQQ4ADFAWJGOV
 ```
 
-Be sure to **save the keys you generate** somewhere liked a .txt file as we will be reusing them later.
+Be sure to **save the keys you generate** somewhere in a ```.txt``` file. We **will** be reusing them later.
 
-Awesome! We have an account, but before we can use it we need to register it with the testnet and fund it with lumens to satisfy the minimum account balance. 
+Awesome! We have an account, but before we can use it we need to 'register' it with the testnet and fund it with lumens to satisfy the minimum account balance. 
 
 What are lumens? The lumen, often abbreviated XLM, is the protocol token of the Stellar network aka the *native* currency of the network. Anyone that wants to hold or move money on Stellar must also hold lumens. They are generally used to pay fees, but are also a functional currency on the network. 
 
 **Note:** In order to prevent spam, Stellar requires accounts to maintain a minimum account balance that is calculated using the **base reserve** fee of 0.5 lumens. Minimum Account Balance = (2 + # of entries) * base reserve fee. Each additional entry reserves an additional 0.5 XLM. Entries include: trustlines, offers, signers, and data entries, but more on those later. 
 
-Luckily [Friendbot](https://github.com/stellar/go/tree/master/services/friendbot) has some lumens to spare. So we'll need to ask for some funds by visiting this link: (Replace my public key with the one you generated)
+Luckily we have a friend that lives on testnet called [Friendbot](https://github.com/stellar/go/tree/master/services/friendbot) who has some lumens to spare. So we'll need to ask for some funds by visiting this link: (Replace my public key with the one you generated)
 
 https://friendbot.stellar.org/?addr=GBG7D5ZZJLAKPDBAGSVS3O3TMIV2O3HOIOXE2OSGGCYNRATOICDRTIAR 
 
@@ -112,7 +112,7 @@ We'll be using a few of these throughout the following chapters.
 
 I know I told you that your testnet account has 10,000 lumens, but you don't have to take my word for it. Let's see how we can interact with the [Horizon testnet API](https://horizon-testnet.stellar.org/) to get more details about accounts and check out our account balance.
 
-Using the SDK we can send a get request to the Horizon account endpoint (https://horizon-testnet.stellar.org/accounts/{account}) and grab the balance information that we are looking for like so:
+Using the SDK we can send a get request to the Horizon account endpoint (https://horizon-testnet.stellar.org/accounts/{account}) and grab the balance information that we are looking for like so (```balance.py```:
 
 ``` python
 from stellar_sdk import Server
