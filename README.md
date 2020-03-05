@@ -7,6 +7,8 @@ Hacking Stellar (Python Edition) is an open-source e-book on the basics of the S
 
 **Early Release Note:** As it stands, this is an early release and will likely be a "living" e-book. Features of the Stellar network and features of the Python Stellar SDK are subject (and likely) to change over time. Code is also likely to be improved or changed over time. 
 
+**Regarding Testnet Resets:** Throughout these chapters I use the Stellar testnet for all examples. Every once in a while the testnet gets reset, deleting all accounts and associated information. This will cause the accounts I used to no longer exist and I'm not sure if it makes sense to constantly fix them. Just something to keep in mind and prepare for as you follow along. To stay in the loop, you can see when testnet resets have been scheduled at [https://status.stellar.org/](https://status.stellar.org/). 
+
 ### What Hacking Stellar Will Teach You
 
 Hacking Stellar will teach you the basics of what you need to know when you start building on Stellar. It will provide scripts and code snippets along the way that will serve as examples as you continue with your experience. Hacking Stellar can also be useful for those looking to dive a little deeper in to some of the technical details surrounding Stellar. 
