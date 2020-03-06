@@ -2,6 +2,9 @@
 
 ## Chapter 0 - Setup
 
+<div align="center"><img width="25%" src="imgs/dev-icon.svg"></div>
+<br>
+
 ### Housekeeping
 
 I mentioned some of this stuff in the prerequisites, but I wanted to mention them again to make sure we start off on the right foot.
